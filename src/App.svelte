@@ -8,7 +8,6 @@
 <script>
   import { PlusCircleIcon, PlusSquareIcon, ChevronsDownIcon, StopCircleIcon, CheckCircleIcon, ClockIcon, TargetIcon, Trash2Icon } from 'svelte-feather-icons'
 
-  export let name;
   let count = 1;
   let maxminutes = 40;
   let timers = [];
