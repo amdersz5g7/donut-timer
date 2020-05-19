@@ -1,5 +1,12 @@
 <svelte:head>
-    <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css">
+  <title>::Donut Timer::</title>
+  
+  <meta name="description" content="multi timer countdown apps" />
+  <meta name="keywords" content="multi timer, countdown, donut" />
+  <meta name="author" content="amdersz5g7" />
+  <meta name="robots" content="index, nofollow" />
+
+  <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css" />
 
   <script src="https://code.responsivevoice.org/responsivevoice.js?key=rrTffgeB"></script>
 
