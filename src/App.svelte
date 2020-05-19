@@ -6,17 +6,13 @@
 </svelte:head>
 
 <script>
-  import { timer } from 'rxjs'
-  let tick = timer(100, 1000);
+  import { PlusCircleIcon, PlusSquareIcon, ChevronsDownIcon, StopCircleIcon, CheckCircleIcon, ClockIcon, TargetIcon, Trash2Icon } from 'svelte-feather-icons'
 
   export let name;
   let count = 1;
   let maxminutes = 40;
   let timers = [];
   let hours, minutes, seconds;
-  //let xmaxmin = maxminutes * 60;
-  //{done: false, text: 'Timer ke-'+count}
-
 
   function alertvoice(id){
    responsiveVoice.speak(
@@ -30,24 +26,33 @@
    );
   }
 
-
   function countdown(element, minutes, seconds) {
-    console.log(element, minutes, seconds);
-
     // Fetch the display element
     var el = element; //document.getElementById(element);
+
+    var timerIntervalID = timers.filter(function(timer){
+      return timer.tid == el.id
+    });
+
+    timerIntervalID[0]['timercontrol'] = setInterval(function() {
+
     // Set the timer
-    var interval = setInterval(function() {
+      //var interval = setInterval(function() {
+
         if(seconds == 0) {
-            if(minutes == 0) {
-                (el.innerHTML = "STOP!");
-              clearInterval(interval);
-              alertvoice(el.id);
-                return;
-            } else {
+          if(minutes == 0) {
+            let elparent = el.parentNode.parentNode;
+            elparent.classList.add('error')
+            el.parentNode.remove();
+
+            //clearInterval(interval);
+            clearInterval(timerIntervalID[0]['timercontrol']);
+            alertvoice(el.id);
+            return;
+          } else {
                 minutes--;
                 seconds = 60;
-            }
+          }
         }
 
         if(minutes > 0) {
@@ -62,27 +67,13 @@
     }, 1000);
   }
 
-  function cnd(node){
-    //debugger;
-    //console.log(node, name)
-    //node.innerHTML = name;
+  function countdwn(node){
     countdown(node,maxminutes,0)
-    //return {
-    //update(name){
-    //  console.log('tid', name);
-    //  countdown(node,10,0)
-    //},
-    //destroy(){
-    //  console.log('destroy');
-    //}
-
-    //}
-
   }
 
   function addTimer(){
-    if (maxminutes < 1){
-      alert('max minutes belum diisi');
+    if (!maxminutes || maxminutes < 1){
+      alert('max minutes harus lebih besar dari 0');
       return
     }
 
@@ -106,8 +97,19 @@
       finish_at: xfinish,
       maxminute: maxminutes
     })
-    
     count += 1;
+  }
+
+  function rmv(){
+    let idtimer = this.parentNode.innerText.replace('Timer ke-','');
+    var timerIntervalID = timers.filter(function(timer){
+      return timer.tid == idtimer
+    });
+
+    if (confirm("Hapus " + this.parentNode.innerText + "?")){
+      clearInterval(timerIntervalID[0]['timercontrol']);
+      this.parentNode.parentNode.remove();
+    }
   }
 </script>
 
@@ -115,48 +117,57 @@
 	<h1>Donut Timer</h1>
 </main>
 
-<center>
-  <input type="number" id="input_menit" placeholder="minutes" bind:value={maxminutes} />
-  <button on:click={addTimer} class="primary">
-    <span class="icon-edit"></span> Add Timer 
-  </button>
-</center>
+<centerx>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <input type="number" id="input_menit" placeholder="minutes" bind:value={maxminutes} />
+      
+        <button on:click={addTimer} class="xprimary">
+          <PlusCircleIcon size="30" />
+        </button>
 
+      </div>
+    </div>
+  </div>
+</centerx>
+
+<div class="row">
 {#each timers as timer}
-  <div class:done={timer.done}>
-    timer ke-{timer.tid}<br>
-    max minutes: {timer.maxminute}<br>
-    start at: {timer.start_at}<br>
-    finish at: {timer.finish_at}<br>
-
-    <div id={timer.tid} use:cnd={name}>
+  <div class="card fluid">
+    <div class="section">
+      <h4>Timer ke-{timer.tid}</h4>
+      <button class="xprimary rmv" on:click={rmv}>
+        <Trash2Icon size="16" />
+      </button>
     </div>
- 
+
+    <div class="section">
+      <div>
+        <TargetIcon size="20" /> <span class="justinfo">{timer.maxminute} menit</span>
+      </div>
+      <div>
+        <ClockIcon size="20" /> <span class="justinfo">{timer.start_at}</span>
+      </div>
+      <div>
+        <StopCircleIcon size="20" /> <span class="justinfo">{timer.finish_at}</span>
+      </div>
+    </div>
+
+    <div class="section to-center">
+      <mark id={timer.tid} use:countdwn></mark>
+    </div>
   </div>
-  <hr>
 {/each}
-
-
-  <!--
-<div class="container">
-  <div class="row">
-    <div class="col-sm">
-Left {name}
-    </div>
-
-    <div class="col-sm">
-Right
-    </div>
-
-  </div>
 </div>
--->
+  
 
 <footer>
-  <center>
-  <p>V8.C0d3::2020</p>
-</center>
+  <center style="color: gray">
+    <p>V8.C0d3 - 2020.05</p>
+  </center>
 </footer>
+
 
 <style>
   main {
@@ -178,5 +189,30 @@ Right
     main {
 			max-width: none;
 		}
-	}
+  }
+
+  .card.fluid{
+    max-width: 100%;
+    min-width: 44%;
+  }
+  .to-center{
+    text-align: center;
+  }
+  .justinfo{
+    position: relative;
+    top: -4px;
+    left: 3px;
+  }
+  .xprimary {
+    background: transparent;
+    position: relative;
+    left: -18px;
+    top: 8px;
+    border-radius: 50%;
+  }
+  .rmv{
+    position: absolute;
+    top: 4px;
+    left: 75%;
+  }
 </style>
