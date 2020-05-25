@@ -19,6 +19,8 @@
   let maxminutes = 40;
   let timers = [];
   let hours, minutes, seconds;
+  let firststart = '-', lastfinish = '-', 
+      timeractive = '-', earlyfinish = '-';
 
   function alertvoice(id){
    responsiveVoice.speak(
@@ -47,13 +49,23 @@
 
         if(seconds == 0) {
           if(minutes == 0) {
+            document.getElementById('card-' + el.id).scrollIntoView();
+
             let elparent = el.parentNode.parentNode;
-            elparent.classList.add('error')
+            elparent.classList.add('error');
             el.parentNode.remove();
 
             //clearInterval(interval);
             clearInterval(timerIntervalID[0]['timercontrol']);
             alertvoice(el.id);
+            
+            timers.forEach(function(a,b) {
+              if (a.tid == el.id){
+                timers[b].done = true;
+                TimeInfo()
+              }
+            });
+
             return;
           } else {
                 minutes--;
@@ -68,13 +80,64 @@
         }
 
         var second_text = seconds > 1 ? '' : '';
-        el.innerHTML = minute_text + ' ' + seconds + ' ' + second_text + '';
+        //el.innerHTML = minute_text + ' ' + seconds + ' ' + second_text + '';
+        let timerun = document.getElementsByClassName("timer-" + el.id);
+        let timertext = minute_text + ' ' + seconds + ' ' + second_text + '';
+        for (let i = 0; i < timerun.length; i++){
+          timerun[i].innerHTML = timertext;
+        }        
         seconds--;
     }, 1000);
   }
 
   function countdwn(node){
     countdown(node,maxminutes,0)
+  }
+
+  /*
+  https://www.educative.io/edpresso/how-to-sort-an-array-of-objects-in-javascript
+  */
+  function dynamicsort(property,order) {
+    var sort_order = 1;
+    if(order === "desc"){
+        sort_order = -1;
+    }
+    return function (a, b){
+        // a should come before b in the sorted order
+        if(a[property] < b[property]){
+                return -1 * sort_order;
+        // a should come after b in the sorted order
+        }else if(a[property] > b[property]){
+                return 1 * sort_order;
+        // a and b are the same
+        }else{
+                return 0 * sort_order;
+        }
+    }
+}
+
+  function TimeInfo(){
+    timeractive = '-'; firststart = '-'; 
+    lastfinish =  '-'; earlyfinish = '-';
+
+    let timeractive_ = timers.filter(function(timer){
+      return timer.remove == false && timer.done == false
+    });
+    if (!!timeractive_ && timeractive_.length > 0){
+      let ds = timeractive_.sort(dynamicsort('start_full','asc'));
+      console.log(ds);
+      firststart = ds[0].start_at + ' (' + ds[0].text + ')';
+
+      ds = timeractive_.sort(dynamicsort('finish_full','desc'));
+      lastfinish = ds[0].finish_at + ' (' + ds[0].text + ')' + '<br /> <span class="timer-' + ds[0].tid + '"></span>';
+
+      ds = timeractive_.sort(dynamicsort('finish_full','asc'));
+      earlyfinish = ds[0].finish_at + ' (' + ds[0].text + ')' + '<br /> <span class="timer-' + ds[0].tid + '"></span>';
+
+      timeractive = ds.length;
+    } else {
+      count = 1;
+    }
   }
 
   function addTimer(){
@@ -84,8 +147,10 @@
     }
 
     let xstart_at = new Date();
-    let xfinish = new Date(xstart_at.getTime() + (maxminutes*60000))
+    let xfinish_at = new Date(xstart_at.getTime() + (maxminutes*60000));
+    
     let xstart = xstart_at;
+    let xfinish = xfinish_at;    
     
     xstart = (xstart.getHours()<10 ? '0' + xstart.getHours():xstart.getHours())
       + ':' + (xstart.getMinutes() < 10 ? '0' + xstart.getMinutes():xstart.getMinutes()) 
@@ -97,13 +162,18 @@
 
     timers = timers.concat({
       tid: count, 
-      done: false, 
+      remove: false, 
       text: 'Timer ke-' + count, 
       start_at: xstart, 
       finish_at: xfinish,
-      maxminute: maxminutes
+      maxminute: maxminutes,
+      start_full: xstart_at,
+      finish_full: xfinish_at,
+      done: false
     })
     count += 1;
+    console.log(timers);
+    TimeInfo();
   }
 
   function rmv(){
@@ -111,10 +181,20 @@
     var timerIntervalID = timers.filter(function(timer){
       return timer.tid == idtimer
     });
+    console.log(timerIntervalID);
 
     if (confirm("Hapus " + this.parentNode.innerText + "?")){
       clearInterval(timerIntervalID[0]['timercontrol']);
-      this.parentNode.parentNode.remove();
+      //this.parentNode.parentNode.remove();
+        
+      timers.forEach(function(a,b) {
+        if (a.tid == idtimer){
+          timers[b].remove = true;
+          TimeInfo()
+        }
+      });
+
+      //console.log(timers_rmv_arr, timers)
     }
   }
 </script>
@@ -124,26 +204,54 @@
 </main>
 
 <centerx>
-  <div class="container">
+  <div class="containerx">
     <div class="row">
-      <div class="col-sm">
+      <div class="col-sm-7">
         <input type="number" id="input_menit" placeholder="minutes" bind:value={maxminutes} />
-      
-        <button on:click={addTimer} class="xprimary">
-          <PlusCircleIcon size="30" />
+      </div>
+      <div class="col-sm-5">
+        <button on:click={addTimer} class="xprimary primary shadowed">
+          <span style="position: relative; top: 3px;"><PlusCircleIcon size="20" /></span> <span>Add Timer</span>
         </button>
-
       </div>
     </div>
+    {#if timeractive > 0 }
+    <div class="row">
+      <div class="col-sm-6">
+        <h6><small>First Start</small>
+        {firststart}
+        </h6>
+      </div>
+      <div class="col-sm-6">
+        <h6><small>Timer Active</small>
+        {timeractive}
+        </h6>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <h6><small>Early Finish</small>
+        {@html earlyfinish}
+        </h6>
+      </div>
+      <div class="col-sm-6">
+        <h6><small>Last Finish</small>
+        {@html lastfinish}
+        </h6>
+      </div>
+    </div>
+    {/if}
   </div>
 </centerx>
 
+<div class="containerd">
 <div class="row">
 {#each timers as timer}
-  <div class="card fluid">
+  <div id={'card-' + timer.tid} class="card fluid {timer.remove ? 'remove_timer':''}">
     <div class="section">
-      <h4>Timer ke-{timer.tid}</h4>
-      <button class="xprimary rmv" on:click={rmv}>
+      <h4 style="margin-left: 0px;">Timer ke-{timer.tid}</h4>
+      <button class="xprimary rmv {timer.remove ? '':'secondary'}" on:click={timer.remove ? null:rmv}>
         <Trash2Icon size="16" />
       </button>
     </div>
@@ -160,13 +268,13 @@
       </div>
     </div>
 
-    <div class="section to-center">
-      <mark id={timer.tid} use:countdwn></mark>
+    <div class="section to-center ">
+      <mark class="tertiary timer-{timer.tid}" id={timer.tid} use:countdwn></mark>
     </div>
   </div>
 {/each}
 </div>
-  
+</div>
 
 <footer>
   <center style="color: gray">
@@ -175,7 +283,16 @@
 </footer>
 
 
-<style>
+<style> 
+  html,
+  body {
+      overscroll-behavior-y: contain;
+  }
+
+  .remove_timer {    
+    display: none;
+  }
+
   main {
     color: yellowgreen;
 		text-align: center;
@@ -210,15 +327,21 @@
     left: 3px;
   }
   .xprimary {
-    background: transparent;
-    position: relative;
+    //background: transparent;
+    /*position: relative;
     left: -18px;
     top: 8px;
-    border-radius: 50%;
+    border-radius: 50%;*/
+    //margin: auto;
+
+    margin-top: 3px
   }
   .rmv{
     position: absolute;
-    top: 4px;
-    left: 75%;
+    top: 6px;
+    left: 67%;
+  }
+  #input_menit{
+    width: 100%;
   }
 </style>
