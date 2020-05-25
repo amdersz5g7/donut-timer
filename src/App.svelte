@@ -52,10 +52,13 @@
         if(seconds == 0) {
           if(minutes == 0) {
             document.getElementById('card-' + el.id).scrollIntoView();
-
+            
             let elparent = el.parentNode.parentNode;
-            elparent.classList.add('error');
-            el.parentNode.remove();
+            //elparent.classList.add(['error', 'card-off']);
+            elparent.className += ' error card-off '
+            
+            //el.parentNode.remove();
+            el.parentElement.innerHTML = "Time's Up";
 
             //clearInterval(interval);
             clearInterval(timerIntervalID[0]['timercontrol']);
@@ -97,7 +100,8 @@
   }
 
   function countdwn(node){
-    countdown(node,maxminutes,0)
+    countdown(node,0,maxminutes)
+    //countdown(node,maxminutes,0)
   }
 
   /*
@@ -129,6 +133,16 @@
     let timeractive_ = timers.filter(function(timer){
       return timer.remove == false && timer.done == false
     });
+    timeractive = timeractive_.length;
+
+    console.log('time info')
+    if (timeractive_.length == 0){
+      timeractive = '-';
+      timeractive_ = timers.filter(function(timer){
+        return timer.remove == false && timer.done == true
+      });
+    }
+
     if (!!timeractive_ && timeractive_.length > 0){
       let ds = timeractive_.sort(dynamicsort('start_full','asc'));
       console.log(ds);
@@ -140,9 +154,12 @@
       ds = timeractive_.sort(dynamicsort('finish_full','asc'));
       earlyfinish = ds[0].finish_at + ' (' + ds[0].text + ')' + '<br /> <span class="timer-' + ds[0].tid + '"></span>';
 
-      timeractive = ds.length;
+      
     } else {
-      count = 1;
+      let timeremove = timers.filter(function(timer){
+        return timer.remove == true
+      });
+      if (timers.length == timeremove.length){ count = 1; timers = [];}
     }
   }
 
@@ -218,7 +235,10 @@
   }
   */
 
- /* https://nandovieira.com/supporting-dark-mode-in-web-content */
+ /* 
+ https://nandovieira.com/supporting-dark-mode-in-web-content 
+ https://davidwalsh.name/css-variables-javascript
+ */
  function isDarkMode() {
     if (
       window.matchMedia &&
@@ -235,7 +255,7 @@
       document.documentElement.style.setProperty('--footer-border-color', '#464f57');
     }
   }
-  isDarkMode();
+  //isDarkMode();
 </script>
 
 <main>
@@ -254,7 +274,7 @@
         </button>
       </div>
     </div>
-    {#if timeractive > 0 }
+    {#if count > 1 }
     <div class="row">
       <div class="col-sm-6">
         <h6><small>First Start</small>
@@ -345,6 +365,11 @@
 
 
 <style> 
+   .card.card-off > div * {
+      color: #eca4a4 !important;
+      text-decoration: line-through;
+  }
+
   html,
   body {
       overscroll-behavior-y: contain;
@@ -405,4 +430,5 @@
   #input_menit{
     width: 100%;
   }
+ 
 </style>

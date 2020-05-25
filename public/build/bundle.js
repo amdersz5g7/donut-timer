@@ -1591,7 +1591,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (257:4) {#if timeractive > 0 }
+    // (277:4) {#if count > 1 }
     function create_if_block(ctx) {
     	let div2;
     	let div0;
@@ -1627,14 +1627,14 @@ var app = (function () {
     			small0 = element("small");
     			small0.textContent = "First Start";
     			t1 = space();
-    			t2 = text(/*firststart*/ ctx[2]);
+    			t2 = text(/*firststart*/ ctx[3]);
     			t3 = space();
     			div1 = element("div");
     			h61 = element("h6");
     			small1 = element("small");
     			small1.textContent = "Timer Active";
     			t5 = space();
-    			t6 = text(/*timeractive*/ ctx[4]);
+    			t6 = text(/*timeractive*/ ctx[5]);
     			t7 = space();
     			div5 = element("div");
     			div3 = element("div");
@@ -1648,28 +1648,36 @@ var app = (function () {
     			small3 = element("small");
     			small3.textContent = "Last Finish";
     			t12 = space();
-    			add_location(small0, file$8, 259, 12, 7916);
-    			add_location(h60, file$8, 259, 8, 7912);
-    			attr_dev(div0, "class", "col-sm-6");
-    			add_location(div0, file$8, 258, 6, 7881);
-    			add_location(small1, file$8, 264, 12, 8032);
-    			add_location(h61, file$8, 264, 8, 8028);
-    			attr_dev(div1, "class", "col-sm-6");
-    			add_location(div1, file$8, 263, 6, 7997);
-    			attr_dev(div2, "class", "row");
-    			add_location(div2, file$8, 257, 4, 7857);
-    			add_location(small2, file$8, 272, 12, 8184);
-    			html_tag = new HtmlTag(/*earlyfinish*/ ctx[5], null);
-    			add_location(h62, file$8, 272, 8, 8180);
-    			attr_dev(div3, "class", "col-sm-6");
-    			add_location(div3, file$8, 271, 6, 8149);
-    			add_location(small3, file$8, 277, 12, 8308);
-    			html_tag_1 = new HtmlTag(/*lastfinish*/ ctx[3], null);
-    			add_location(h63, file$8, 277, 8, 8304);
-    			attr_dev(div4, "class", "col-sm-6");
-    			add_location(div4, file$8, 276, 6, 8273);
-    			attr_dev(div5, "class", "row");
-    			add_location(div5, file$8, 270, 4, 8125);
+    			attr_dev(small0, "class", "svelte-1d9vog8");
+    			add_location(small0, file$8, 279, 12, 8539);
+    			attr_dev(h60, "class", "svelte-1d9vog8");
+    			add_location(h60, file$8, 279, 8, 8535);
+    			attr_dev(div0, "class", "col-sm-6 svelte-1d9vog8");
+    			add_location(div0, file$8, 278, 6, 8504);
+    			attr_dev(small1, "class", "svelte-1d9vog8");
+    			add_location(small1, file$8, 284, 12, 8655);
+    			attr_dev(h61, "class", "svelte-1d9vog8");
+    			add_location(h61, file$8, 284, 8, 8651);
+    			attr_dev(div1, "class", "col-sm-6 svelte-1d9vog8");
+    			add_location(div1, file$8, 283, 6, 8620);
+    			attr_dev(div2, "class", "row svelte-1d9vog8");
+    			add_location(div2, file$8, 277, 4, 8480);
+    			attr_dev(small2, "class", "svelte-1d9vog8");
+    			add_location(small2, file$8, 292, 12, 8807);
+    			html_tag = new HtmlTag(/*earlyfinish*/ ctx[6], null);
+    			attr_dev(h62, "class", "svelte-1d9vog8");
+    			add_location(h62, file$8, 292, 8, 8803);
+    			attr_dev(div3, "class", "col-sm-6 svelte-1d9vog8");
+    			add_location(div3, file$8, 291, 6, 8772);
+    			attr_dev(small3, "class", "svelte-1d9vog8");
+    			add_location(small3, file$8, 297, 12, 8931);
+    			html_tag_1 = new HtmlTag(/*lastfinish*/ ctx[4], null);
+    			attr_dev(h63, "class", "svelte-1d9vog8");
+    			add_location(h63, file$8, 297, 8, 8927);
+    			attr_dev(div4, "class", "col-sm-6 svelte-1d9vog8");
+    			add_location(div4, file$8, 296, 6, 8896);
+    			attr_dev(div5, "class", "row svelte-1d9vog8");
+    			add_location(div5, file$8, 290, 4, 8748);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -1699,10 +1707,10 @@ var app = (function () {
     			html_tag_1.m(h63);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*firststart*/ 4) set_data_dev(t2, /*firststart*/ ctx[2]);
-    			if (dirty & /*timeractive*/ 16) set_data_dev(t6, /*timeractive*/ ctx[4]);
-    			if (dirty & /*earlyfinish*/ 32) html_tag.p(/*earlyfinish*/ ctx[5]);
-    			if (dirty & /*lastfinish*/ 8) html_tag_1.p(/*lastfinish*/ ctx[3]);
+    			if (dirty & /*firststart*/ 8) set_data_dev(t2, /*firststart*/ ctx[3]);
+    			if (dirty & /*timeractive*/ 32) set_data_dev(t6, /*timeractive*/ ctx[5]);
+    			if (dirty & /*earlyfinish*/ 64) html_tag.p(/*earlyfinish*/ ctx[6]);
+    			if (dirty & /*lastfinish*/ 16) html_tag_1.p(/*lastfinish*/ ctx[4]);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div2);
@@ -1715,14 +1723,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(257:4) {#if timeractive > 0 }",
+    		source: "(277:4) {#if count > 1 }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (292:0) {#each timers as timer}
+    // (312:0) {#each timers as timer}
     function create_each_block(ctx) {
     	let div6;
     	let div0;
@@ -1804,30 +1812,34 @@ var app = (function () {
     			mark = element("mark");
     			t14 = space();
     			set_style(h4, "margin-left", "0px");
-    			add_location(h4, file$8, 294, 6, 8620);
-    			attr_dev(button, "class", button_class_value = "xprimary rmv " + (/*timer*/ ctx[17].remove ? "" : "secondary") + " svelte-rexc8m");
-    			add_location(button, file$8, 295, 6, 8682);
-    			attr_dev(div0, "class", "section");
-    			add_location(div0, file$8, 293, 4, 8592);
-    			attr_dev(span0, "class", "justinfo svelte-rexc8m");
-    			add_location(span0, file$8, 302, 33, 8911);
-    			add_location(div1, file$8, 301, 6, 8872);
-    			attr_dev(span1, "class", "justinfo svelte-rexc8m");
-    			add_location(span1, file$8, 305, 32, 9022);
-    			add_location(div2, file$8, 304, 6, 8984);
-    			attr_dev(span2, "class", "justinfo svelte-rexc8m");
-    			add_location(span2, file$8, 308, 37, 9131);
-    			add_location(div3, file$8, 307, 6, 9088);
-    			attr_dev(div4, "class", "section");
-    			add_location(div4, file$8, 300, 4, 8844);
-    			attr_dev(mark, "class", mark_class_value = "tertiary timer-" + /*timer*/ ctx[17].tid + " svelte-rexc8m");
+    			attr_dev(h4, "class", "svelte-1d9vog8");
+    			add_location(h4, file$8, 314, 6, 9243);
+    			attr_dev(button, "class", button_class_value = "xprimary rmv " + (/*timer*/ ctx[17].remove ? "" : "secondary") + " svelte-1d9vog8");
+    			add_location(button, file$8, 315, 6, 9305);
+    			attr_dev(div0, "class", "section svelte-1d9vog8");
+    			add_location(div0, file$8, 313, 4, 9215);
+    			attr_dev(span0, "class", "justinfo svelte-1d9vog8");
+    			add_location(span0, file$8, 322, 33, 9534);
+    			attr_dev(div1, "class", "svelte-1d9vog8");
+    			add_location(div1, file$8, 321, 6, 9495);
+    			attr_dev(span1, "class", "justinfo svelte-1d9vog8");
+    			add_location(span1, file$8, 325, 32, 9645);
+    			attr_dev(div2, "class", "svelte-1d9vog8");
+    			add_location(div2, file$8, 324, 6, 9607);
+    			attr_dev(span2, "class", "justinfo svelte-1d9vog8");
+    			add_location(span2, file$8, 328, 37, 9754);
+    			attr_dev(div3, "class", "svelte-1d9vog8");
+    			add_location(div3, file$8, 327, 6, 9711);
+    			attr_dev(div4, "class", "section svelte-1d9vog8");
+    			add_location(div4, file$8, 320, 4, 9467);
+    			attr_dev(mark, "class", mark_class_value = "tertiary timer-" + /*timer*/ ctx[17].tid + " svelte-1d9vog8");
     			attr_dev(mark, "id", mark_id_value = /*timer*/ ctx[17].tid);
-    			add_location(mark, file$8, 332, 6, 9799);
-    			attr_dev(div5, "class", "section to-center  svelte-rexc8m");
-    			add_location(div5, file$8, 331, 4, 9760);
+    			add_location(mark, file$8, 352, 6, 10422);
+    			attr_dev(div5, "class", "section to-center  svelte-1d9vog8");
+    			add_location(div5, file$8, 351, 4, 10383);
     			attr_dev(div6, "id", div6_id_value = "card-" + /*timer*/ ctx[17].tid);
-    			attr_dev(div6, "class", div6_class_value = "card fluid " + (/*timer*/ ctx[17].remove ? "remove_timer" : "") + " svelte-rexc8m");
-    			add_location(div6, file$8, 292, 2, 8503);
+    			attr_dev(div6, "class", div6_class_value = "card fluid " + (/*timer*/ ctx[17].remove ? "remove_timer" : "") + " svelte-1d9vog8");
+    			add_location(div6, file$8, 312, 2, 9126);
     		},
     		m: function mount(target, anchor, remount) {
     			insert_dev(target, div6, anchor);
@@ -1870,40 +1882,40 @@ var app = (function () {
     					button,
     					"click",
     					function () {
-    						if (is_function(/*timer*/ ctx[17].remove ? null : /*rmv*/ ctx[8])) (/*timer*/ ctx[17].remove ? null : /*rmv*/ ctx[8]).apply(this, arguments);
+    						if (is_function(/*timer*/ ctx[17].remove ? null : /*rmv*/ ctx[9])) (/*timer*/ ctx[17].remove ? null : /*rmv*/ ctx[9]).apply(this, arguments);
     					},
     					false,
     					false,
     					false
     				),
-    				action_destroyer(countdwn_action = /*countdwn*/ ctx[6].call(null, mark))
+    				action_destroyer(countdwn_action = /*countdwn*/ ctx[7].call(null, mark))
     			];
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
-    			if ((!current || dirty & /*timers*/ 2) && t1_value !== (t1_value = /*timer*/ ctx[17].tid + "")) set_data_dev(t1, t1_value);
+    			if ((!current || dirty & /*timers*/ 4) && t1_value !== (t1_value = /*timer*/ ctx[17].tid + "")) set_data_dev(t1, t1_value);
 
-    			if (!current || dirty & /*timers*/ 2 && button_class_value !== (button_class_value = "xprimary rmv " + (/*timer*/ ctx[17].remove ? "" : "secondary") + " svelte-rexc8m")) {
+    			if (!current || dirty & /*timers*/ 4 && button_class_value !== (button_class_value = "xprimary rmv " + (/*timer*/ ctx[17].remove ? "" : "secondary") + " svelte-1d9vog8")) {
     				attr_dev(button, "class", button_class_value);
     			}
 
-    			if ((!current || dirty & /*timers*/ 2) && t5_value !== (t5_value = /*timer*/ ctx[17].maxminute + "")) set_data_dev(t5, t5_value);
-    			if ((!current || dirty & /*timers*/ 2) && t9_value !== (t9_value = /*timer*/ ctx[17].start_at + "")) set_data_dev(t9, t9_value);
-    			if ((!current || dirty & /*timers*/ 2) && t12_value !== (t12_value = /*timer*/ ctx[17].finish_at + "")) set_data_dev(t12, t12_value);
+    			if ((!current || dirty & /*timers*/ 4) && t5_value !== (t5_value = /*timer*/ ctx[17].maxminute + "")) set_data_dev(t5, t5_value);
+    			if ((!current || dirty & /*timers*/ 4) && t9_value !== (t9_value = /*timer*/ ctx[17].start_at + "")) set_data_dev(t9, t9_value);
+    			if ((!current || dirty & /*timers*/ 4) && t12_value !== (t12_value = /*timer*/ ctx[17].finish_at + "")) set_data_dev(t12, t12_value);
 
-    			if (!current || dirty & /*timers*/ 2 && mark_class_value !== (mark_class_value = "tertiary timer-" + /*timer*/ ctx[17].tid + " svelte-rexc8m")) {
+    			if (!current || dirty & /*timers*/ 4 && mark_class_value !== (mark_class_value = "tertiary timer-" + /*timer*/ ctx[17].tid + " svelte-1d9vog8")) {
     				attr_dev(mark, "class", mark_class_value);
     			}
 
-    			if (!current || dirty & /*timers*/ 2 && mark_id_value !== (mark_id_value = /*timer*/ ctx[17].tid)) {
+    			if (!current || dirty & /*timers*/ 4 && mark_id_value !== (mark_id_value = /*timer*/ ctx[17].tid)) {
     				attr_dev(mark, "id", mark_id_value);
     			}
 
-    			if (!current || dirty & /*timers*/ 2 && div6_id_value !== (div6_id_value = "card-" + /*timer*/ ctx[17].tid)) {
+    			if (!current || dirty & /*timers*/ 4 && div6_id_value !== (div6_id_value = "card-" + /*timer*/ ctx[17].tid)) {
     				attr_dev(div6, "id", div6_id_value);
     			}
 
-    			if (!current || dirty & /*timers*/ 2 && div6_class_value !== (div6_class_value = "card fluid " + (/*timer*/ ctx[17].remove ? "remove_timer" : "") + " svelte-rexc8m")) {
+    			if (!current || dirty & /*timers*/ 4 && div6_class_value !== (div6_class_value = "card fluid " + (/*timer*/ ctx[17].remove ? "remove_timer" : "") + " svelte-1d9vog8")) {
     				attr_dev(div6, "class", div6_class_value);
     			}
     		},
@@ -1936,7 +1948,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(292:0) {#each timers as timer}",
+    		source: "(312:0) {#each timers as timer}",
     		ctx
     	});
 
@@ -1977,8 +1989,8 @@ var app = (function () {
     	let current;
     	let dispose;
     	const pluscircleicon = new PlusCircleIcon({ props: { size: "20" }, $$inline: true });
-    	let if_block = /*timeractive*/ ctx[4] > 0 && create_if_block(ctx);
-    	let each_value = /*timers*/ ctx[1];
+    	let if_block = /*count*/ ctx[0] > 1 && create_if_block(ctx);
+    	let each_value = /*timers*/ ctx[2];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -2049,38 +2061,40 @@ var app = (function () {
     			add_location(link, file$8, 8, 2, 284);
     			if (script.src !== (script_src_value = "https://code.responsivevoice.org/responsivevoice.js?key=rrTffgeB")) attr_dev(script, "src", script_src_value);
     			add_location(script, file$8, 10, 2, 398);
-    			attr_dev(h1, "class", "svelte-rexc8m");
-    			add_location(h1, file$8, 241, 1, 7345);
-    			attr_dev(main, "class", "svelte-rexc8m");
-    			add_location(main, file$8, 240, 0, 7337);
+    			attr_dev(h1, "class", "svelte-1d9vog8");
+    			add_location(h1, file$8, 261, 1, 7974);
+    			attr_dev(main, "class", "svelte-1d9vog8");
+    			add_location(main, file$8, 260, 0, 7966);
     			attr_dev(input, "type", "number");
     			attr_dev(input, "id", "input_menit");
     			attr_dev(input, "placeholder", "minutes");
-    			attr_dev(input, "class", "svelte-rexc8m");
-    			add_location(input, file$8, 248, 8, 7471);
-    			attr_dev(div0, "class", "col-sm-7");
-    			add_location(div0, file$8, 247, 6, 7440);
+    			attr_dev(input, "class", "svelte-1d9vog8");
+    			add_location(input, file$8, 268, 8, 8100);
+    			attr_dev(div0, "class", "col-sm-7 svelte-1d9vog8");
+    			add_location(div0, file$8, 267, 6, 8069);
     			set_style(span0, "position", "relative");
     			set_style(span0, "top", "3px");
-    			add_location(span0, file$8, 252, 10, 7681);
-    			add_location(span1, file$8, 252, 90, 7761);
-    			attr_dev(button, "class", "xprimary primary shadowed svelte-rexc8m");
-    			add_location(button, file$8, 251, 8, 7608);
-    			attr_dev(div1, "class", "col-sm-5");
-    			add_location(div1, file$8, 250, 6, 7577);
-    			attr_dev(div2, "class", "row");
-    			add_location(div2, file$8, 246, 4, 7416);
-    			attr_dev(div3, "class", "containerx");
-    			add_location(div3, file$8, 245, 2, 7387);
-    			add_location(centerx, file$8, 244, 0, 7375);
-    			attr_dev(div4, "class", "row");
-    			add_location(div4, file$8, 290, 0, 8459);
-    			attr_dev(div5, "class", "containerd");
-    			add_location(div5, file$8, 289, 0, 8434);
-    			add_location(p, file$8, 341, 4, 9963);
+    			attr_dev(span0, "class", "svelte-1d9vog8");
+    			add_location(span0, file$8, 272, 10, 8310);
+    			attr_dev(span1, "class", "svelte-1d9vog8");
+    			add_location(span1, file$8, 272, 90, 8390);
+    			attr_dev(button, "class", "xprimary primary shadowed svelte-1d9vog8");
+    			add_location(button, file$8, 271, 8, 8237);
+    			attr_dev(div1, "class", "col-sm-5 svelte-1d9vog8");
+    			add_location(div1, file$8, 270, 6, 8206);
+    			attr_dev(div2, "class", "row svelte-1d9vog8");
+    			add_location(div2, file$8, 266, 4, 8045);
+    			attr_dev(div3, "class", "containerx svelte-1d9vog8");
+    			add_location(div3, file$8, 265, 2, 8016);
+    			add_location(centerx, file$8, 264, 0, 8004);
+    			attr_dev(div4, "class", "row svelte-1d9vog8");
+    			add_location(div4, file$8, 310, 0, 9082);
+    			attr_dev(div5, "class", "containerd svelte-1d9vog8");
+    			add_location(div5, file$8, 309, 0, 9057);
+    			add_location(p, file$8, 361, 4, 10586);
     			set_style(center, "color", "gray");
-    			add_location(center, file$8, 340, 2, 9930);
-    			add_location(footer, file$8, 339, 0, 9919);
+    			add_location(center, file$8, 360, 2, 10553);
+    			add_location(footer, file$8, 359, 0, 10542);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2101,7 +2115,7 @@ var app = (function () {
     			append_dev(div3, div2);
     			append_dev(div2, div0);
     			append_dev(div0, input);
-    			set_input_value(input, /*maxminutes*/ ctx[0]);
+    			set_input_value(input, /*maxminutes*/ ctx[1]);
     			append_dev(div2, t3);
     			append_dev(div2, div1);
     			append_dev(div1, button);
@@ -2128,15 +2142,15 @@ var app = (function () {
 
     			dispose = [
     				listen_dev(input, "input", /*input_input_handler*/ ctx[16]),
-    				listen_dev(button, "click", /*addTimer*/ ctx[7], false, false, false)
+    				listen_dev(button, "click", /*addTimer*/ ctx[8], false, false, false)
     			];
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*maxminutes*/ 1 && to_number(input.value) !== /*maxminutes*/ ctx[0]) {
-    				set_input_value(input, /*maxminutes*/ ctx[0]);
+    			if (dirty & /*maxminutes*/ 2 && to_number(input.value) !== /*maxminutes*/ ctx[1]) {
+    				set_input_value(input, /*maxminutes*/ ctx[1]);
     			}
 
-    			if (/*timeractive*/ ctx[4] > 0) {
+    			if (/*count*/ ctx[0] > 1) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
     				} else {
@@ -2149,8 +2163,8 @@ var app = (function () {
     				if_block = null;
     			}
 
-    			if (dirty & /*timers, rmv*/ 258) {
-    				each_value = /*timers*/ ctx[1];
+    			if (dirty & /*timers, rmv*/ 516) {
+    				each_value = /*timers*/ ctx[2];
     				validate_each_argument(each_value);
     				let i;
 
@@ -2270,7 +2284,10 @@ var app = (function () {
       console.log(minadd)
     }
     */
-    /* https://nandovieira.com/supporting-dark-mode-in-web-content */
+    /*
+    https://nandovieira.com/supporting-dark-mode-in-web-content 
+    https://davidwalsh.name/css-variables-javascript
+    */
     function isDarkMode() {
     	if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
     		document.documentElement.style.setProperty("--back-color", "#212529");
@@ -2311,8 +2328,12 @@ var app = (function () {
     */
 
     						let elparent = el.parentNode.parentNode;
-    						elparent.classList.add("error");
-    						el.parentNode.remove();
+
+    						//elparent.classList.add(['error', 'card-off']);
+    						elparent.className += " error card-off ";
+
+    						//el.parentNode.remove();
+    						el.parentElement.innerHTML = "Time's Up";
 
     						//clearInterval(interval);
     						clearInterval(timerIntervalID[0]["timercontrol"]);
@@ -2321,7 +2342,7 @@ var app = (function () {
 
     						timers.forEach(function (a, b) {
     							if (a.tid == el.id) {
-    								$$invalidate(1, timers[b].done = true, timers);
+    								$$invalidate(2, timers[b].done = true, timers);
     								TimeInfo();
     							}
     						});
@@ -2360,30 +2381,47 @@ var app = (function () {
     	}
 
     	function countdwn(node) {
-    		countdown(node, maxminutes, 0);
-    	}
+    		countdown(node, 0, maxminutes);
+    	} //countdown(node,maxminutes,0)
 
     	function TimeInfo() {
-    		$$invalidate(4, timeractive = "-");
-    		$$invalidate(2, firststart = "-");
-    		$$invalidate(3, lastfinish = "-");
-    		$$invalidate(5, earlyfinish = "-");
+    		$$invalidate(5, timeractive = "-");
+    		$$invalidate(3, firststart = "-");
+    		$$invalidate(4, lastfinish = "-");
+    		$$invalidate(6, earlyfinish = "-");
 
     		let timeractive_ = timers.filter(function (timer) {
     			return timer.remove == false && timer.done == false;
     		});
 
+    		$$invalidate(5, timeractive = timeractive_.length);
+    		console.log("time info");
+
+    		if (timeractive_.length == 0) {
+    			$$invalidate(5, timeractive = "-");
+
+    			timeractive_ = timers.filter(function (timer) {
+    				return timer.remove == false && timer.done == true;
+    			});
+    		}
+
     		if (!!timeractive_ && timeractive_.length > 0) {
     			let ds = timeractive_.sort(dynamicsort("start_full", "asc"));
     			console.log(ds);
-    			$$invalidate(2, firststart = ds[0].start_at + " (" + ds[0].text + ")");
+    			$$invalidate(3, firststart = ds[0].start_at + " (" + ds[0].text + ")");
     			ds = timeractive_.sort(dynamicsort("finish_full", "desc"));
-    			$$invalidate(3, lastfinish = ds[0].finish_at + " (" + ds[0].text + ")" + "<br /> <span class=\"timer-" + ds[0].tid + "\"></span>");
+    			$$invalidate(4, lastfinish = ds[0].finish_at + " (" + ds[0].text + ")" + "<br /> <span class=\"timer-" + ds[0].tid + "\"></span>");
     			ds = timeractive_.sort(dynamicsort("finish_full", "asc"));
-    			$$invalidate(5, earlyfinish = ds[0].finish_at + " (" + ds[0].text + ")" + "<br /> <span class=\"timer-" + ds[0].tid + "\"></span>");
-    			$$invalidate(4, timeractive = ds.length);
+    			$$invalidate(6, earlyfinish = ds[0].finish_at + " (" + ds[0].text + ")" + "<br /> <span class=\"timer-" + ds[0].tid + "\"></span>");
     		} else {
-    			count = 1;
+    			let timeremove = timers.filter(function (timer) {
+    				return timer.remove == true;
+    			});
+
+    			if (timers.length == timeremove.length) {
+    				$$invalidate(0, count = 1);
+    				$$invalidate(2, timers = []);
+    			}
     		}
     	}
 
@@ -2414,7 +2452,7 @@ var app = (function () {
     		? "0" + xfinish.getSeconds()
     		: xfinish.getSeconds());
 
-    		$$invalidate(1, timers = timers.concat({
+    		$$invalidate(2, timers = timers.concat({
     			tid: count,
     			remove: false,
     			text: "Timer ke-" + count,
@@ -2426,7 +2464,7 @@ var app = (function () {
     			done: false
     		}));
 
-    		count += 1;
+    		$$invalidate(0, count += 1);
     		console.log(timers);
     		TimeInfo();
     	}
@@ -2446,14 +2484,13 @@ var app = (function () {
     			//this.parentNode.parentNode.remove();
     			timers.forEach(function (a, b) {
     				if (a.tid == idtimer) {
-    					$$invalidate(1, timers[b].remove = true, timers);
+    					$$invalidate(2, timers[b].remove = true, timers);
     					TimeInfo();
     				}
     			});
     		} //console.log(timers_rmv_arr, timers)
     	}
 
-    	isDarkMode();
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
@@ -2465,7 +2502,7 @@ var app = (function () {
 
     	function input_input_handler() {
     		maxminutes = to_number(this.value);
-    		$$invalidate(0, maxminutes);
+    		$$invalidate(1, maxminutes);
     	}
 
     	$$self.$capture_state = () => ({
@@ -2499,16 +2536,16 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ("count" in $$props) count = $$props.count;
-    		if ("maxminutes" in $$props) $$invalidate(0, maxminutes = $$props.maxminutes);
-    		if ("timers" in $$props) $$invalidate(1, timers = $$props.timers);
+    		if ("count" in $$props) $$invalidate(0, count = $$props.count);
+    		if ("maxminutes" in $$props) $$invalidate(1, maxminutes = $$props.maxminutes);
+    		if ("timers" in $$props) $$invalidate(2, timers = $$props.timers);
     		if ("hours" in $$props) hours = $$props.hours;
     		if ("minutes" in $$props) minutes = $$props.minutes;
     		if ("seconds" in $$props) seconds = $$props.seconds;
-    		if ("firststart" in $$props) $$invalidate(2, firststart = $$props.firststart);
-    		if ("lastfinish" in $$props) $$invalidate(3, lastfinish = $$props.lastfinish);
-    		if ("timeractive" in $$props) $$invalidate(4, timeractive = $$props.timeractive);
-    		if ("earlyfinish" in $$props) $$invalidate(5, earlyfinish = $$props.earlyfinish);
+    		if ("firststart" in $$props) $$invalidate(3, firststart = $$props.firststart);
+    		if ("lastfinish" in $$props) $$invalidate(4, lastfinish = $$props.lastfinish);
+    		if ("timeractive" in $$props) $$invalidate(5, timeractive = $$props.timeractive);
+    		if ("earlyfinish" in $$props) $$invalidate(6, earlyfinish = $$props.earlyfinish);
     		if ("minuteadd" in $$props) minuteadd = $$props.minuteadd;
     	};
 
@@ -2517,6 +2554,7 @@ var app = (function () {
     	}
 
     	return [
+    		count,
     		maxminutes,
     		timers,
     		firststart,
@@ -2526,7 +2564,6 @@ var app = (function () {
     		countdwn,
     		addTimer,
     		rmv,
-    		count,
     		hours,
     		minutes,
     		seconds,
