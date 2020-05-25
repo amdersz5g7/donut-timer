@@ -217,6 +217,25 @@
     console.log(minadd)
   }
   */
+
+ /* https://nandovieira.com/supporting-dark-mode-in-web-content */
+ function isDarkMode() {
+    if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    ) {
+      document.documentElement.style.setProperty('--back-color', '#212529');
+      document.documentElement.style.setProperty('--fore-color', '#6c757d');
+
+      document.documentElement.style.setProperty('--card-back-color', '#31383e');
+      document.documentElement.style.setProperty('--card-fore-color', '#6c757d');
+      document.documentElement.style.setProperty('--card-border-color', '#464f57');
+
+      document.documentElement.style.setProperty('--footer-back-color', '#212529');
+      document.documentElement.style.setProperty('--footer-border-color', '#464f57');
+    }
+  }
+  isDarkMode();
 </script>
 
 <main>
