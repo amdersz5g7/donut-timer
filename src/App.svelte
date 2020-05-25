@@ -21,7 +21,9 @@
   let hours, minutes, seconds;
   let firststart = '-', lastfinish = '-', 
       timeractive = '-', earlyfinish = '-';
+  let minuteadd = 0;
 
+  
   function alertvoice(id){
    responsiveVoice.speak(
     "Timer ke " + id + ', sudah habis waktu',
@@ -34,7 +36,7 @@
    );
   }
 
-  function countdown(element, minutes, seconds) {
+  function countdown(element, minutes, seconds, _minuteadd) {
     // Fetch the display element
     var el = element; //document.getElementById(element);
 
@@ -87,6 +89,10 @@
           timerun[i].innerHTML = timertext;
         }        
         seconds--;
+        /*
+        minutes += ((!!_minuteadd && _minuteadd > 0) ? _minuteadd:0);
+        minuteadd = 0;
+        */
     }, 1000);
   }
 
@@ -197,6 +203,20 @@
       //console.log(timers_rmv_arr, timers)
     }
   }
+  /*
+  function add_more(minadd){
+    
+    //let _minuteadd = prompt("Add more minutes?");
+    let txt;
+    if (minadd == null || minadd == "" || minadd < 1) {
+      txt = "input not valid";
+    } else {
+      txt = "ok, you add more " + minadd + ' minute(s)';
+      //minuteadd = minadd
+    } 
+    console.log(minadd)
+  }
+  */
 </script>
 
 <main>
@@ -243,6 +263,9 @@
     </div>
     {/if}
   </div>
+
+
+
 </centerx>
 
 <div class="containerd">
@@ -266,7 +289,26 @@
       <div>
         <StopCircleIcon size="20" /> <span class="justinfo">{timer.finish_at}</span>
       </div>
+
+      <!--
+      <div>
+      <label for="modal-control">add minute</label>
+
+      <input type="checkbox" id="modal-control" class="modal">
+      <div>
+        <div class="card">
+          <label for="modal-control" class="modal-close" ></label>
+          <h3 class="section">Add more minutes...</h3>      
+          <input id="txtminuteadd" type="number" placeholder="add more minutes"/>  
+          <button class="primar" on:click={add_more('3')}>
+            add minute(s)
+          </button>    
+        </div>
+      </div>
     </div>
+    -->
+    </div>
+    
 
     <div class="section to-center ">
       <mark class="tertiary timer-{timer.tid}" id={timer.tid} use:countdwn></mark>
@@ -327,13 +369,13 @@
     left: 3px;
   }
   .xprimary {
-    //background: transparent;
-    /*position: relative;
+    /*background: transparent;
+    position: relative;
     left: -18px;
     top: 8px;
-    border-radius: 50%;*/
-    //margin: auto;
-
+    border-radius: 50%;
+    margin: auto;
+    */
     margin-top: 3px
   }
   .rmv{

@@ -1587,11 +1587,11 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[16] = list[i];
+    	child_ctx[17] = list[i];
     	return child_ctx;
     }
 
-    // (218:4) {#if timeractive > 0 }
+    // (236:4) {#if timeractive > 0 }
     function create_if_block(ctx) {
     	let div2;
     	let div0;
@@ -1648,28 +1648,28 @@ var app = (function () {
     			small3 = element("small");
     			small3.textContent = "Last Finish";
     			t12 = space();
-    			add_location(small0, file$8, 220, 12, 6636);
-    			add_location(h60, file$8, 220, 8, 6632);
+    			add_location(small0, file$8, 238, 12, 7093);
+    			add_location(h60, file$8, 238, 8, 7089);
     			attr_dev(div0, "class", "col-sm-6");
-    			add_location(div0, file$8, 219, 6, 6601);
-    			add_location(small1, file$8, 225, 12, 6752);
-    			add_location(h61, file$8, 225, 8, 6748);
+    			add_location(div0, file$8, 237, 6, 7058);
+    			add_location(small1, file$8, 243, 12, 7209);
+    			add_location(h61, file$8, 243, 8, 7205);
     			attr_dev(div1, "class", "col-sm-6");
-    			add_location(div1, file$8, 224, 6, 6717);
+    			add_location(div1, file$8, 242, 6, 7174);
     			attr_dev(div2, "class", "row");
-    			add_location(div2, file$8, 218, 4, 6577);
-    			add_location(small2, file$8, 233, 12, 6904);
+    			add_location(div2, file$8, 236, 4, 7034);
+    			add_location(small2, file$8, 251, 12, 7361);
     			html_tag = new HtmlTag(/*earlyfinish*/ ctx[5], null);
-    			add_location(h62, file$8, 233, 8, 6900);
+    			add_location(h62, file$8, 251, 8, 7357);
     			attr_dev(div3, "class", "col-sm-6");
-    			add_location(div3, file$8, 232, 6, 6869);
-    			add_location(small3, file$8, 238, 12, 7028);
+    			add_location(div3, file$8, 250, 6, 7326);
+    			add_location(small3, file$8, 256, 12, 7485);
     			html_tag_1 = new HtmlTag(/*lastfinish*/ ctx[3], null);
-    			add_location(h63, file$8, 238, 8, 7024);
+    			add_location(h63, file$8, 256, 8, 7481);
     			attr_dev(div4, "class", "col-sm-6");
-    			add_location(div4, file$8, 237, 6, 6993);
+    			add_location(div4, file$8, 255, 6, 7450);
     			attr_dev(div5, "class", "row");
-    			add_location(div5, file$8, 231, 4, 6845);
+    			add_location(div5, file$8, 249, 4, 7302);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -1715,20 +1715,20 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(218:4) {#if timeractive > 0 }",
+    		source: "(236:4) {#if timeractive > 0 }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (250:0) {#each timers as timer}
+    // (271:0) {#each timers as timer}
     function create_each_block(ctx) {
     	let div6;
     	let div0;
     	let h4;
     	let t0;
-    	let t1_value = /*timer*/ ctx[16].tid + "";
+    	let t1_value = /*timer*/ ctx[17].tid + "";
     	let t1;
     	let t2;
     	let button;
@@ -1738,20 +1738,20 @@ var app = (function () {
     	let div1;
     	let t4;
     	let span0;
-    	let t5_value = /*timer*/ ctx[16].maxminute + "";
+    	let t5_value = /*timer*/ ctx[17].maxminute + "";
     	let t5;
     	let t6;
     	let t7;
     	let div2;
     	let t8;
     	let span1;
-    	let t9_value = /*timer*/ ctx[16].start_at + "";
+    	let t9_value = /*timer*/ ctx[17].start_at + "";
     	let t9;
     	let t10;
     	let div3;
     	let t11;
     	let span2;
-    	let t12_value = /*timer*/ ctx[16].finish_at + "";
+    	let t12_value = /*timer*/ ctx[17].finish_at + "";
     	let t12;
     	let t13;
     	let div5;
@@ -1804,30 +1804,30 @@ var app = (function () {
     			mark = element("mark");
     			t14 = space();
     			set_style(h4, "margin-left", "0px");
-    			add_location(h4, file$8, 252, 6, 7337);
-    			attr_dev(button, "class", button_class_value = "xprimary rmv " + (/*timer*/ ctx[16].remove ? "" : "secondary") + " svelte-gopu2q");
-    			add_location(button, file$8, 253, 6, 7399);
+    			add_location(h4, file$8, 273, 6, 7797);
+    			attr_dev(button, "class", button_class_value = "xprimary rmv " + (/*timer*/ ctx[17].remove ? "" : "secondary") + " svelte-gopu2q");
+    			add_location(button, file$8, 274, 6, 7859);
     			attr_dev(div0, "class", "section");
-    			add_location(div0, file$8, 251, 4, 7309);
+    			add_location(div0, file$8, 272, 4, 7769);
     			attr_dev(span0, "class", "justinfo svelte-gopu2q");
-    			add_location(span0, file$8, 260, 33, 7628);
-    			add_location(div1, file$8, 259, 6, 7589);
+    			add_location(span0, file$8, 281, 33, 8088);
+    			add_location(div1, file$8, 280, 6, 8049);
     			attr_dev(span1, "class", "justinfo svelte-gopu2q");
-    			add_location(span1, file$8, 263, 32, 7739);
-    			add_location(div2, file$8, 262, 6, 7701);
+    			add_location(span1, file$8, 284, 32, 8199);
+    			add_location(div2, file$8, 283, 6, 8161);
     			attr_dev(span2, "class", "justinfo svelte-gopu2q");
-    			add_location(span2, file$8, 266, 37, 7848);
-    			add_location(div3, file$8, 265, 6, 7805);
+    			add_location(span2, file$8, 287, 37, 8308);
+    			add_location(div3, file$8, 286, 6, 8265);
     			attr_dev(div4, "class", "section");
-    			add_location(div4, file$8, 258, 4, 7561);
-    			attr_dev(mark, "class", mark_class_value = "tertiary timer-" + /*timer*/ ctx[16].tid + " svelte-gopu2q");
-    			attr_dev(mark, "id", mark_id_value = /*timer*/ ctx[16].tid);
-    			add_location(mark, file$8, 271, 6, 7964);
+    			add_location(div4, file$8, 279, 4, 8021);
+    			attr_dev(mark, "class", mark_class_value = "tertiary timer-" + /*timer*/ ctx[17].tid + " svelte-gopu2q");
+    			attr_dev(mark, "id", mark_id_value = /*timer*/ ctx[17].tid);
+    			add_location(mark, file$8, 311, 6, 8976);
     			attr_dev(div5, "class", "section to-center  svelte-gopu2q");
-    			add_location(div5, file$8, 270, 4, 7925);
-    			attr_dev(div6, "id", div6_id_value = "card-" + /*timer*/ ctx[16].tid);
-    			attr_dev(div6, "class", div6_class_value = "card fluid " + (/*timer*/ ctx[16].remove ? "remove_timer" : "") + " svelte-gopu2q");
-    			add_location(div6, file$8, 250, 2, 7220);
+    			add_location(div5, file$8, 310, 4, 8937);
+    			attr_dev(div6, "id", div6_id_value = "card-" + /*timer*/ ctx[17].tid);
+    			attr_dev(div6, "class", div6_class_value = "card fluid " + (/*timer*/ ctx[17].remove ? "remove_timer" : "") + " svelte-gopu2q");
+    			add_location(div6, file$8, 271, 2, 7680);
     		},
     		m: function mount(target, anchor, remount) {
     			insert_dev(target, div6, anchor);
@@ -1870,7 +1870,7 @@ var app = (function () {
     					button,
     					"click",
     					function () {
-    						if (is_function(/*timer*/ ctx[16].remove ? null : /*rmv*/ ctx[8])) (/*timer*/ ctx[16].remove ? null : /*rmv*/ ctx[8]).apply(this, arguments);
+    						if (is_function(/*timer*/ ctx[17].remove ? null : /*rmv*/ ctx[8])) (/*timer*/ ctx[17].remove ? null : /*rmv*/ ctx[8]).apply(this, arguments);
     					},
     					false,
     					false,
@@ -1881,29 +1881,29 @@ var app = (function () {
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
-    			if ((!current || dirty & /*timers*/ 2) && t1_value !== (t1_value = /*timer*/ ctx[16].tid + "")) set_data_dev(t1, t1_value);
+    			if ((!current || dirty & /*timers*/ 2) && t1_value !== (t1_value = /*timer*/ ctx[17].tid + "")) set_data_dev(t1, t1_value);
 
-    			if (!current || dirty & /*timers*/ 2 && button_class_value !== (button_class_value = "xprimary rmv " + (/*timer*/ ctx[16].remove ? "" : "secondary") + " svelte-gopu2q")) {
+    			if (!current || dirty & /*timers*/ 2 && button_class_value !== (button_class_value = "xprimary rmv " + (/*timer*/ ctx[17].remove ? "" : "secondary") + " svelte-gopu2q")) {
     				attr_dev(button, "class", button_class_value);
     			}
 
-    			if ((!current || dirty & /*timers*/ 2) && t5_value !== (t5_value = /*timer*/ ctx[16].maxminute + "")) set_data_dev(t5, t5_value);
-    			if ((!current || dirty & /*timers*/ 2) && t9_value !== (t9_value = /*timer*/ ctx[16].start_at + "")) set_data_dev(t9, t9_value);
-    			if ((!current || dirty & /*timers*/ 2) && t12_value !== (t12_value = /*timer*/ ctx[16].finish_at + "")) set_data_dev(t12, t12_value);
+    			if ((!current || dirty & /*timers*/ 2) && t5_value !== (t5_value = /*timer*/ ctx[17].maxminute + "")) set_data_dev(t5, t5_value);
+    			if ((!current || dirty & /*timers*/ 2) && t9_value !== (t9_value = /*timer*/ ctx[17].start_at + "")) set_data_dev(t9, t9_value);
+    			if ((!current || dirty & /*timers*/ 2) && t12_value !== (t12_value = /*timer*/ ctx[17].finish_at + "")) set_data_dev(t12, t12_value);
 
-    			if (!current || dirty & /*timers*/ 2 && mark_class_value !== (mark_class_value = "tertiary timer-" + /*timer*/ ctx[16].tid + " svelte-gopu2q")) {
+    			if (!current || dirty & /*timers*/ 2 && mark_class_value !== (mark_class_value = "tertiary timer-" + /*timer*/ ctx[17].tid + " svelte-gopu2q")) {
     				attr_dev(mark, "class", mark_class_value);
     			}
 
-    			if (!current || dirty & /*timers*/ 2 && mark_id_value !== (mark_id_value = /*timer*/ ctx[16].tid)) {
+    			if (!current || dirty & /*timers*/ 2 && mark_id_value !== (mark_id_value = /*timer*/ ctx[17].tid)) {
     				attr_dev(mark, "id", mark_id_value);
     			}
 
-    			if (!current || dirty & /*timers*/ 2 && div6_id_value !== (div6_id_value = "card-" + /*timer*/ ctx[16].tid)) {
+    			if (!current || dirty & /*timers*/ 2 && div6_id_value !== (div6_id_value = "card-" + /*timer*/ ctx[17].tid)) {
     				attr_dev(div6, "id", div6_id_value);
     			}
 
-    			if (!current || dirty & /*timers*/ 2 && div6_class_value !== (div6_class_value = "card fluid " + (/*timer*/ ctx[16].remove ? "remove_timer" : "") + " svelte-gopu2q")) {
+    			if (!current || dirty & /*timers*/ 2 && div6_class_value !== (div6_class_value = "card fluid " + (/*timer*/ ctx[17].remove ? "remove_timer" : "") + " svelte-gopu2q")) {
     				attr_dev(div6, "class", div6_class_value);
     			}
     		},
@@ -1936,7 +1936,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(250:0) {#each timers as timer}",
+    		source: "(271:0) {#each timers as timer}",
     		ctx
     	});
 
@@ -2050,37 +2050,37 @@ var app = (function () {
     			if (script.src !== (script_src_value = "https://code.responsivevoice.org/responsivevoice.js?key=rrTffgeB")) attr_dev(script, "src", script_src_value);
     			add_location(script, file$8, 10, 2, 398);
     			attr_dev(h1, "class", "svelte-gopu2q");
-    			add_location(h1, file$8, 202, 1, 6065);
+    			add_location(h1, file$8, 220, 1, 6522);
     			attr_dev(main, "class", "svelte-gopu2q");
-    			add_location(main, file$8, 201, 0, 6057);
+    			add_location(main, file$8, 219, 0, 6514);
     			attr_dev(input, "type", "number");
     			attr_dev(input, "id", "input_menit");
     			attr_dev(input, "placeholder", "minutes");
     			attr_dev(input, "class", "svelte-gopu2q");
-    			add_location(input, file$8, 209, 8, 6191);
+    			add_location(input, file$8, 227, 8, 6648);
     			attr_dev(div0, "class", "col-sm-7");
-    			add_location(div0, file$8, 208, 6, 6160);
+    			add_location(div0, file$8, 226, 6, 6617);
     			set_style(span0, "position", "relative");
     			set_style(span0, "top", "3px");
-    			add_location(span0, file$8, 213, 10, 6401);
-    			add_location(span1, file$8, 213, 90, 6481);
+    			add_location(span0, file$8, 231, 10, 6858);
+    			add_location(span1, file$8, 231, 90, 6938);
     			attr_dev(button, "class", "xprimary primary shadowed svelte-gopu2q");
-    			add_location(button, file$8, 212, 8, 6328);
+    			add_location(button, file$8, 230, 8, 6785);
     			attr_dev(div1, "class", "col-sm-5");
-    			add_location(div1, file$8, 211, 6, 6297);
+    			add_location(div1, file$8, 229, 6, 6754);
     			attr_dev(div2, "class", "row");
-    			add_location(div2, file$8, 207, 4, 6136);
+    			add_location(div2, file$8, 225, 4, 6593);
     			attr_dev(div3, "class", "containerx");
-    			add_location(div3, file$8, 206, 2, 6107);
-    			add_location(centerx, file$8, 205, 0, 6095);
+    			add_location(div3, file$8, 224, 2, 6564);
+    			add_location(centerx, file$8, 223, 0, 6552);
     			attr_dev(div4, "class", "row");
-    			add_location(div4, file$8, 248, 0, 7176);
+    			add_location(div4, file$8, 269, 0, 7636);
     			attr_dev(div5, "class", "containerd");
-    			add_location(div5, file$8, 247, 0, 7151);
-    			add_location(p, file$8, 280, 4, 8128);
+    			add_location(div5, file$8, 268, 0, 7611);
+    			add_location(p, file$8, 320, 4, 9140);
     			set_style(center, "color", "gray");
-    			add_location(center, file$8, 279, 2, 8095);
-    			add_location(footer, file$8, 278, 0, 8084);
+    			add_location(center, file$8, 319, 2, 9107);
+    			add_location(footer, file$8, 318, 0, 9096);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2127,7 +2127,7 @@ var app = (function () {
     			if (remount) run_all(dispose);
 
     			dispose = [
-    				listen_dev(input, "input", /*input_input_handler*/ ctx[15]),
+    				listen_dev(input, "input", /*input_input_handler*/ ctx[16]),
     				listen_dev(button, "click", /*addTimer*/ ctx[7], false, false, false)
     			];
     		},
@@ -2262,8 +2262,9 @@ var app = (function () {
     	let timers = [];
     	let hours, minutes, seconds;
     	let firststart = "-", lastfinish = "-", timeractive = "-", earlyfinish = "-";
+    	let minuteadd = 0;
 
-    	function countdown(element, minutes, seconds) {
+    	function countdown(element, minutes, seconds, _minuteadd) {
     		// Fetch the display element
     		var el = element; //document.getElementById(element);
 
@@ -2319,6 +2320,8 @@ var app = (function () {
     				}
 
     				seconds--;
+    				minutes += !!_minuteadd && _minuteadd > 0 ? _minuteadd : 0;
+    				minuteadd = 0;
     			},
     			1000
     		);
@@ -2451,6 +2454,7 @@ var app = (function () {
     		lastfinish,
     		timeractive,
     		earlyfinish,
+    		minuteadd,
     		alertvoice,
     		countdown,
     		countdwn,
@@ -2471,6 +2475,7 @@ var app = (function () {
     		if ("lastfinish" in $$props) $$invalidate(3, lastfinish = $$props.lastfinish);
     		if ("timeractive" in $$props) $$invalidate(4, timeractive = $$props.timeractive);
     		if ("earlyfinish" in $$props) $$invalidate(5, earlyfinish = $$props.earlyfinish);
+    		if ("minuteadd" in $$props) minuteadd = $$props.minuteadd;
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -2488,6 +2493,7 @@ var app = (function () {
     		addTimer,
     		rmv,
     		count,
+    		minuteadd,
     		hours,
     		minutes,
     		seconds,
