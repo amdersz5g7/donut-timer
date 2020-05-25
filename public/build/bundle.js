@@ -1649,35 +1649,35 @@ var app = (function () {
     			small3.textContent = "Last Finish";
     			t12 = space();
     			attr_dev(small0, "class", "svelte-1d9vog8");
-    			add_location(small0, file$8, 279, 12, 8539);
+    			add_location(small0, file$8, 279, 12, 8537);
     			attr_dev(h60, "class", "svelte-1d9vog8");
-    			add_location(h60, file$8, 279, 8, 8535);
+    			add_location(h60, file$8, 279, 8, 8533);
     			attr_dev(div0, "class", "col-sm-6 svelte-1d9vog8");
-    			add_location(div0, file$8, 278, 6, 8504);
+    			add_location(div0, file$8, 278, 6, 8502);
     			attr_dev(small1, "class", "svelte-1d9vog8");
-    			add_location(small1, file$8, 284, 12, 8655);
+    			add_location(small1, file$8, 284, 12, 8653);
     			attr_dev(h61, "class", "svelte-1d9vog8");
-    			add_location(h61, file$8, 284, 8, 8651);
+    			add_location(h61, file$8, 284, 8, 8649);
     			attr_dev(div1, "class", "col-sm-6 svelte-1d9vog8");
-    			add_location(div1, file$8, 283, 6, 8620);
+    			add_location(div1, file$8, 283, 6, 8618);
     			attr_dev(div2, "class", "row svelte-1d9vog8");
-    			add_location(div2, file$8, 277, 4, 8480);
+    			add_location(div2, file$8, 277, 4, 8478);
     			attr_dev(small2, "class", "svelte-1d9vog8");
-    			add_location(small2, file$8, 292, 12, 8807);
+    			add_location(small2, file$8, 292, 12, 8805);
     			html_tag = new HtmlTag(/*earlyfinish*/ ctx[6], null);
     			attr_dev(h62, "class", "svelte-1d9vog8");
-    			add_location(h62, file$8, 292, 8, 8803);
+    			add_location(h62, file$8, 292, 8, 8801);
     			attr_dev(div3, "class", "col-sm-6 svelte-1d9vog8");
-    			add_location(div3, file$8, 291, 6, 8772);
+    			add_location(div3, file$8, 291, 6, 8770);
     			attr_dev(small3, "class", "svelte-1d9vog8");
-    			add_location(small3, file$8, 297, 12, 8931);
+    			add_location(small3, file$8, 297, 12, 8929);
     			html_tag_1 = new HtmlTag(/*lastfinish*/ ctx[4], null);
     			attr_dev(h63, "class", "svelte-1d9vog8");
-    			add_location(h63, file$8, 297, 8, 8927);
+    			add_location(h63, file$8, 297, 8, 8925);
     			attr_dev(div4, "class", "col-sm-6 svelte-1d9vog8");
-    			add_location(div4, file$8, 296, 6, 8896);
+    			add_location(div4, file$8, 296, 6, 8894);
     			attr_dev(div5, "class", "row svelte-1d9vog8");
-    			add_location(div5, file$8, 290, 4, 8748);
+    			add_location(div5, file$8, 290, 4, 8746);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -1813,33 +1813,33 @@ var app = (function () {
     			t14 = space();
     			set_style(h4, "margin-left", "0px");
     			attr_dev(h4, "class", "svelte-1d9vog8");
-    			add_location(h4, file$8, 314, 6, 9243);
+    			add_location(h4, file$8, 314, 6, 9241);
     			attr_dev(button, "class", button_class_value = "xprimary rmv " + (/*timer*/ ctx[17].remove ? "" : "secondary") + " svelte-1d9vog8");
-    			add_location(button, file$8, 315, 6, 9305);
+    			add_location(button, file$8, 315, 6, 9303);
     			attr_dev(div0, "class", "section svelte-1d9vog8");
-    			add_location(div0, file$8, 313, 4, 9215);
+    			add_location(div0, file$8, 313, 4, 9213);
     			attr_dev(span0, "class", "justinfo svelte-1d9vog8");
-    			add_location(span0, file$8, 322, 33, 9534);
+    			add_location(span0, file$8, 322, 33, 9532);
     			attr_dev(div1, "class", "svelte-1d9vog8");
-    			add_location(div1, file$8, 321, 6, 9495);
+    			add_location(div1, file$8, 321, 6, 9493);
     			attr_dev(span1, "class", "justinfo svelte-1d9vog8");
-    			add_location(span1, file$8, 325, 32, 9645);
+    			add_location(span1, file$8, 325, 32, 9643);
     			attr_dev(div2, "class", "svelte-1d9vog8");
-    			add_location(div2, file$8, 324, 6, 9607);
+    			add_location(div2, file$8, 324, 6, 9605);
     			attr_dev(span2, "class", "justinfo svelte-1d9vog8");
-    			add_location(span2, file$8, 328, 37, 9754);
+    			add_location(span2, file$8, 328, 37, 9752);
     			attr_dev(div3, "class", "svelte-1d9vog8");
-    			add_location(div3, file$8, 327, 6, 9711);
+    			add_location(div3, file$8, 327, 6, 9709);
     			attr_dev(div4, "class", "section svelte-1d9vog8");
-    			add_location(div4, file$8, 320, 4, 9467);
+    			add_location(div4, file$8, 320, 4, 9465);
     			attr_dev(mark, "class", mark_class_value = "tertiary timer-" + /*timer*/ ctx[17].tid + " svelte-1d9vog8");
     			attr_dev(mark, "id", mark_id_value = /*timer*/ ctx[17].tid);
-    			add_location(mark, file$8, 352, 6, 10422);
+    			add_location(mark, file$8, 352, 6, 10420);
     			attr_dev(div5, "class", "section to-center  svelte-1d9vog8");
-    			add_location(div5, file$8, 351, 4, 10383);
+    			add_location(div5, file$8, 351, 4, 10381);
     			attr_dev(div6, "id", div6_id_value = "card-" + /*timer*/ ctx[17].tid);
     			attr_dev(div6, "class", div6_class_value = "card fluid " + (/*timer*/ ctx[17].remove ? "remove_timer" : "") + " svelte-1d9vog8");
-    			add_location(div6, file$8, 312, 2, 9126);
+    			add_location(div6, file$8, 312, 2, 9124);
     		},
     		m: function mount(target, anchor, remount) {
     			insert_dev(target, div6, anchor);
@@ -2062,39 +2062,39 @@ var app = (function () {
     			if (script.src !== (script_src_value = "https://code.responsivevoice.org/responsivevoice.js?key=rrTffgeB")) attr_dev(script, "src", script_src_value);
     			add_location(script, file$8, 10, 2, 398);
     			attr_dev(h1, "class", "svelte-1d9vog8");
-    			add_location(h1, file$8, 261, 1, 7974);
+    			add_location(h1, file$8, 261, 1, 7972);
     			attr_dev(main, "class", "svelte-1d9vog8");
-    			add_location(main, file$8, 260, 0, 7966);
+    			add_location(main, file$8, 260, 0, 7964);
     			attr_dev(input, "type", "number");
     			attr_dev(input, "id", "input_menit");
     			attr_dev(input, "placeholder", "minutes");
     			attr_dev(input, "class", "svelte-1d9vog8");
-    			add_location(input, file$8, 268, 8, 8100);
+    			add_location(input, file$8, 268, 8, 8098);
     			attr_dev(div0, "class", "col-sm-7 svelte-1d9vog8");
-    			add_location(div0, file$8, 267, 6, 8069);
+    			add_location(div0, file$8, 267, 6, 8067);
     			set_style(span0, "position", "relative");
     			set_style(span0, "top", "3px");
     			attr_dev(span0, "class", "svelte-1d9vog8");
-    			add_location(span0, file$8, 272, 10, 8310);
+    			add_location(span0, file$8, 272, 10, 8308);
     			attr_dev(span1, "class", "svelte-1d9vog8");
-    			add_location(span1, file$8, 272, 90, 8390);
+    			add_location(span1, file$8, 272, 90, 8388);
     			attr_dev(button, "class", "xprimary primary shadowed svelte-1d9vog8");
-    			add_location(button, file$8, 271, 8, 8237);
+    			add_location(button, file$8, 271, 8, 8235);
     			attr_dev(div1, "class", "col-sm-5 svelte-1d9vog8");
-    			add_location(div1, file$8, 270, 6, 8206);
+    			add_location(div1, file$8, 270, 6, 8204);
     			attr_dev(div2, "class", "row svelte-1d9vog8");
-    			add_location(div2, file$8, 266, 4, 8045);
+    			add_location(div2, file$8, 266, 4, 8043);
     			attr_dev(div3, "class", "containerx svelte-1d9vog8");
-    			add_location(div3, file$8, 265, 2, 8016);
-    			add_location(centerx, file$8, 264, 0, 8004);
+    			add_location(div3, file$8, 265, 2, 8014);
+    			add_location(centerx, file$8, 264, 0, 8002);
     			attr_dev(div4, "class", "row svelte-1d9vog8");
-    			add_location(div4, file$8, 310, 0, 9082);
+    			add_location(div4, file$8, 310, 0, 9080);
     			attr_dev(div5, "class", "containerd svelte-1d9vog8");
-    			add_location(div5, file$8, 309, 0, 9057);
-    			add_location(p, file$8, 361, 4, 10586);
+    			add_location(div5, file$8, 309, 0, 9055);
+    			add_location(p, file$8, 361, 4, 10584);
     			set_style(center, "color", "gray");
-    			add_location(center, file$8, 360, 2, 10553);
-    			add_location(footer, file$8, 359, 0, 10542);
+    			add_location(center, file$8, 360, 2, 10551);
+    			add_location(footer, file$8, 359, 0, 10540);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2381,8 +2381,9 @@ var app = (function () {
     	}
 
     	function countdwn(node) {
-    		countdown(node, 0, maxminutes);
-    	} //countdown(node,maxminutes,0)
+    		//countdown(node,0,maxminutes)
+    		countdown(node, maxminutes, 0);
+    	}
 
     	function TimeInfo() {
     		$$invalidate(5, timeractive = "-");
@@ -2491,6 +2492,7 @@ var app = (function () {
     		} //console.log(timers_rmv_arr, timers)
     	}
 
+    	isDarkMode();
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {

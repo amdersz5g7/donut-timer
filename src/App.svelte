@@ -100,8 +100,8 @@
   }
 
   function countdwn(node){
-    countdown(node,0,maxminutes)
-    //countdown(node,maxminutes,0)
+    //countdown(node,0,maxminutes)
+    countdown(node,maxminutes,0)
   }
 
   /*
@@ -255,7 +255,7 @@
       document.documentElement.style.setProperty('--footer-border-color', '#464f57');
     }
   }
-  //isDarkMode();
+  isDarkMode();
 </script>
 
 <main>
