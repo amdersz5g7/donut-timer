@@ -22,7 +22,7 @@
   let firststart = '-', lastfinish = '-', 
       timeractive = '-', earlyfinish = '-';
   let minuteadd = 0;
-
+  let header, sticky;
   
   function alertvoice(id){
    responsiveVoice.speak(
@@ -124,7 +124,7 @@
                 return 0 * sort_order;
         }
     }
-}
+  }
 
   function TimeInfo(){
     timeractive = '-'; firststart = '-'; 
@@ -160,6 +160,13 @@
         return timer.remove == true
       });
       if (timers.length == timeremove.length){ count = 1; timers = [];}
+    }
+    
+    header = document.getElementById("summary");
+    if (!!header && !sticky){
+      // Get the offset position of the navbar
+      console.log('header', header)
+      sticky = header.offsetTop; // + header.clientHeight;
     }
   }
 
@@ -216,7 +223,6 @@
           TimeInfo()
         }
       });
-
       //console.log(timers_rmv_arr, timers)
     }
   }
@@ -253,9 +259,31 @@
 
       document.documentElement.style.setProperty('--footer-back-color', '#212529');
       document.documentElement.style.setProperty('--footer-border-color', '#464f57');
+
+      document.documentElement.style.setProperty('--sticky-shadow', '#ccc');
     }
   }
   isDarkMode();
+  
+  /*
+  https://jsfiddle.net/nd9etLjy/1/
+  https://stackoverflow.com/questions/47945890/how-do-i-make-a-dynamic-sticky-toolbar-without-weird-scroll-glitch-when-page-is
+  */
+  window.onscroll = function() {myFunction()};    
+  // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
+  function myFunction() {
+    var containerd = document.getElementsByClassName("containerd");
+    if (!!header){
+      if (window.pageYOffset > sticky) {
+      header.classList.add("sticky");
+      containerd[0].classList.add('sticky-containerd');
+      
+    } else {
+      header.classList.remove("sticky");
+      containerd[0].classList.remove('sticky-containerd');
+    }
+    }    
+  }   
 </script>
 
 <main>
@@ -263,7 +291,7 @@
 </main>
 
 <centerx>
-  <div class="containerx">
+  <div id="summary" class="containerx">
     <div class="row">
       <div class="col-sm-7">
         <input type="number" id="input_menit" placeholder="minutes" bind:value={maxminutes} />
@@ -274,37 +302,39 @@
         </button>
       </div>
     </div>
+
+    <div id="summaryx">
     {#if count > 1 }
-    <div class="row">
-      <div class="col-sm-6">
-        <h6><small>First Start</small>
-        {firststart}
-        </h6>
+    
+      <div class="row">
+        <div class="col-sm-6">
+          <h6><small>First Start</small>
+          {firststart}
+          </h6>
+        </div>
+        <div class="col-sm-6">
+          <h6><small>Timer Active</small>
+          {timeractive}
+          </h6>
+        </div>
       </div>
-      <div class="col-sm-6">
-        <h6><small>Timer Active</small>
-        {timeractive}
-        </h6>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-sm-6">
-        <h6><small>Early Finish</small>
-        {@html earlyfinish}
-        </h6>
+      <div class="row">
+        <div class="col-sm-6">
+          <h6><small>Early Finish</small>
+          {@html earlyfinish}
+          </h6>
+        </div>
+        <div class="col-sm-6">
+          <h6><small>Last Finish</small>
+          {@html lastfinish}
+          </h6>
+        </div>
       </div>
-      <div class="col-sm-6">
-        <h6><small>Last Finish</small>
-        {@html lastfinish}
-        </h6>
-      </div>
-    </div>
+    
     {/if}
+    </div>
   </div>
-
-
-
 </centerx>
 
 <div class="containerd">
@@ -430,5 +460,21 @@
   #input_menit{
     width: 100%;
   }
- 
+  .sticky{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+    background: var(--back-color);
+    box-shadow: 0 10px 10px -5px var(--sticky-shadow);
+    left: 0;
+  }
+  
+  .sticky-containerd {
+    padding-top: 178px;
+  }
+
+  :root{
+    --sticky-shadow: #212529
+  }
 </style>
