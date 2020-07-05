@@ -315,8 +315,7 @@
  https://nandovieira.com/supporting-dark-mode-in-web-content 
  https://davidwalsh.name/css-variables-javascript
  */
- function isDarkMode() {
-    return;
+ function isDarkMode() {    
     if (
       window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches
