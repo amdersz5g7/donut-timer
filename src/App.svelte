@@ -15,16 +15,43 @@
 <script>
   import { PlusCircleIcon, PlusSquareIcon, ChevronsDownIcon, StopCircleIcon, CheckCircleIcon, ClockIcon, TargetIcon, Trash2Icon } from 'svelte-feather-icons'
 
-  let count = 1;
-  let maxminutes = 40;
-  let timers = [];
+  //https://github.com/andsala/svelte-persistent-store
+  import { writable, readable, derived, get } from 'svelte-persistent-store/dist/local';    
+   
   let hours, minutes, seconds;
   let firststart = '-', lastfinish = '-', 
       timeractive = '-', earlyfinish = '-';
   let minuteadd = 0;
   let header, sticky;
   
-  function alertvoice(id){
+  
+  let ls_count_val
+  const ls_count = writable('ls_count', 1);  
+  const unsubscribe_count = ls_count.subscribe(value => {    
+    ls_count_val = value;
+  });
+  let count = ls_count_val;
+  
+  
+  let ls_maxminutes_val
+  const ls_maxminutes = writable('ls_maxminutes', 75);  
+  const unsubscribe_maxminutes = ls_maxminutes.subscribe(value => {    
+    ls_maxminutes_val = value;
+  });
+  let maxminutes = ls_maxminutes_val;
+  
+  
+  let ls_timers_val;
+  const ls_timers = writable('ls_timers', null);  
+  const unsubscribe_timers = ls_timers.subscribe(value => {    
+    ls_timers_val = eval(JSON.parse(value));    
+    console.log(ls_timers_val);    
+  });
+  let timers = ls_timers_val || [];
+  TimeInfo();
+  
+  
+  function alertvoice(id){ return
    responsiveVoice.speak(
     "Timer ke " + id + ', sudah habis waktu',
     "Indonesian Female",
@@ -36,6 +63,34 @@
    );
   }
 
+    function diff_minutes(date_now, date_future) 
+    {
+        if (date_now > date_future){
+            return {m: 0, s:0}
+        }
+        
+        // get total seconds between the times
+        var delta = Math.abs(date_future - date_now) / 1000;
+        //var delta = (date_future - date_now) / 1000;
+        console.log('delta', delta, date_now > date_future)
+        // calculate (and subtract) whole days
+        var days = Math.floor(delta / 86400);
+        delta -= days * 86400;
+
+        // calculate (and subtract) whole hours
+        var hours = Math.floor(delta / 3600) % 24;
+        delta -= hours * 3600;
+
+        // calculate (and subtract) whole minutes
+        var minutes = Math.floor(delta / 60) % 60;
+        delta -= minutes * 60;
+
+        // what's left is seconds
+        var seconds = Math.floor(delta % 60);  // in theory the modulus is not required  
+        
+        return {m: minutes, s:seconds}
+    }
+ 
   function countdown(element, minutes, seconds, _minuteadd) {
     // Fetch the display element
     var el = element; //document.getElementById(element);
@@ -43,7 +98,16 @@
     var timerIntervalID = timers.filter(function(timer){
       return timer.tid == el.id
     });
-
+    
+    let date_now = new Date();
+    let date_future = new Date(timerIntervalID[0]['finish_full'])
+    console.log(date_now,date_future)
+    
+    let delta_time = diff_minutes(date_now,date_future)
+    console.log('delta_time',delta_time)
+    
+    minutes = delta_time.m; seconds = delta_time.s;
+    
     timerIntervalID[0]['timercontrol'] = setInterval(function() {
 
     // Set the timer
@@ -159,7 +223,7 @@
       let timeremove = timers.filter(function(timer){
         return timer.remove == true
       });
-      if (timers.length == timeremove.length){ count = 1; timers = [];}
+      if (timers.length == timeremove.length){ count = 1; timers = []; ls_count.set(count)}
     }
     
     header = document.getElementById("summary");
@@ -176,6 +240,8 @@
       return
     }
 
+    ls_maxminutes.set(maxminutes);
+    
     let xstart_at = new Date();
     let xfinish_at = new Date(xstart_at.getTime() + (maxminutes*60000));
     
@@ -201,8 +267,11 @@
       finish_full: xfinish_at,
       done: false
     })
+    ls_timers.set(JSON.stringify(timers));
+    
     count += 1;
-    console.log(timers);
+    ls_count.set(count)
+    
     TimeInfo();
   }
 
@@ -221,6 +290,7 @@
         if (a.tid == idtimer){
           timers[b].remove = true;
           TimeInfo()
+          ls_timers.set(JSON.stringify(timers));
         }
       });
       //console.log(timers_rmv_arr, timers)
@@ -246,6 +316,7 @@
  https://davidwalsh.name/css-variables-javascript
  */
  function isDarkMode() {
+    return;
     if (
       window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -263,7 +334,7 @@
       document.documentElement.style.setProperty('--sticky-shadow', '#ccc');
     }
   }
-  isDarkMode();
+  //isDarkMode();
   
   /*
   https://jsfiddle.net/nd9etLjy/1/
@@ -288,6 +359,7 @@
 
 <main>
 	<h1>Donut Timer</h1>
+	<h4>(Build 07.2020)</h4>
 </main>
 
 <centerx>
@@ -340,6 +412,7 @@
 <div class="containerd">
 <div class="row">
 {#each timers as timer}
+
   <div id={'card-' + timer.tid} class="card fluid {timer.remove ? 'remove_timer':''}">
     <div class="section">
       <h4 style="margin-left: 0px;">Timer ke-{timer.tid}</h4>
