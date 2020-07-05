@@ -51,7 +51,7 @@
   TimeInfo();
   
   
-  function alertvoice(id){ return
+  function alertvoice(id){
    responsiveVoice.speak(
     "Timer ke " + id + ', sudah habis waktu',
     "Indonesian Female",
@@ -334,7 +334,7 @@
       document.documentElement.style.setProperty('--sticky-shadow', '#ccc');
     }
   }
-  //isDarkMode();
+  isDarkMode();
   
   /*
   https://jsfiddle.net/nd9etLjy/1/
