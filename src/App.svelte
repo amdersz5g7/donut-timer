@@ -88,7 +88,10 @@
         // what's left is seconds
         var seconds = Math.floor(delta % 60);  // in theory the modulus is not required  
         
-        return {m: minutes, s:seconds}
+        var dif = (date_future - date_now); 
+        var dif = Math.floor((dif/1000)/60);    
+  
+        return {m: dif, s:seconds}
     }
  
   function countdown(element, minutes, seconds, _minuteadd) {
