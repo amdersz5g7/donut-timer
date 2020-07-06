@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css" />
 
   <script src="https://code.responsivevoice.org/responsivevoice.js?key=rrTffgeB"></script>
-
+  <script async src="scripts/gtag.js"></script>
 </svelte:head>
 
 <script>
