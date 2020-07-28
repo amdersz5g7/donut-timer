@@ -2,7 +2,7 @@
   <title>::Donut Timer::</title>
   
   <meta name="description" content="multi timer countdown apps" />
-  <meta name="keywords" content="multi timer, countdown, donut" />
+  <meta name="keywords" content="multi timer, countdown, donut, kitchen, timer, parallel timer" />
   <meta name="author" content="amdersz5g7" />
   <meta name="robots" content="index, nofollow" />
 
@@ -373,7 +373,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
 	<h1>Donut Timer</h1>
-	<h4>(Build 07.2020)</h4>
 </main>
 
 <centerx>
@@ -474,10 +473,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 </div>
 
-<footer>
-  <center style="color: gray">
-    <p>V8.C0d3 - 2020.05</p>
-  </center>
+<footer style="margin-top: 20px; ">
+<center>
+    <div class="row">
+        
+        
+        <div class="col-sm-12">
+            
+           
+            <a href="https://www.svelte.dev">
+                <img src="/svelte.png" style="height: 48px" alt="svelte" />
+            </a>
+             <a href="https://www.github.com">
+                <img style="height: 48px" src="https://cdn3.iconfinder.com/data/icons/social-media-2034/500/github-64.png" alt="Host on Github" />
+            </a>
+            <a href="https://www.netlify.com">
+                <img style="height: 48px" src="https://www.netlify.com/img/global/badges/netlify-color-accent.svg" alt="Deploys by Netlify" />
+            </a>
+        </div>
+        <div class="col-sm-12">
+            V8.C0d3 - 2020.05 - v3.2.0
+        </div>
+    </div>
+  </center> 
 </footer>
 
 
@@ -486,10 +504,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       color: #eca4a4 !important;
       text-decoration: line-through;
   }
-
+    
   html,
   body {
       overscroll-behavior-y: contain;
+      
   }
 
   .remove_timer {    
