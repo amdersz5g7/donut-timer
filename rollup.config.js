@@ -49,7 +49,7 @@ export default {
 		// instead of npm run dev), minify
 		production && terser(),
 		
-		plugins: [uglify()]
+		uglify()
 	],
 	watch: {
 		clearScreen: false
