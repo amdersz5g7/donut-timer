@@ -11,19 +11,20 @@
   <script src="https://code.responsivevoice.org/responsivevoice.js?key=rrTffgeB"></script>
   <script async src="scripts/gtag.js"></script>
   <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-MSNW3DF');</script>
-    <!-- End Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MSNW3DF');</script>
+  <!-- End Google Tag Manager -->
 </svelte:head>
 
 <script>
-  import { PlusCircleIcon, PlusSquareIcon, ChevronsDownIcon, StopCircleIcon, CheckCircleIcon, ClockIcon, TargetIcon, Trash2Icon, PackageIcon } from 'svelte-feather-icons'
-
-  // Local persistent store helper (keeps behavior simple and avoids package export issues)
-  import { writable, readable, derived, get } from './lib/persistent.js';    
+  import { PlusCircleIcon, Trash2Icon, ClockIcon, TargetIcon, StopCircleIcon, PackageIcon, EditIcon, SaveIcon, XIcon } from 'svelte-feather-icons'
+  import { writable } from './lib/persistent.js';    
+  
+  // Export prop to handle external props passed to component
+  export let name = 'Donut Timer';
    
   let hours, minutes, seconds;
   let firststart = '-', lastfinish = '-', 
@@ -31,194 +32,200 @@
   let minuteadd = 0;
   let header, sticky;
   
-  
-  let ls_count_val
+  // Fixed: Proper initialization with fallback values
+  let ls_count_val = 1;
   const ls_count = writable('ls_count', 1);  
   const unsubscribe_count = ls_count.subscribe(value => {    
-    ls_count_val = value;
+    ls_count_val = value || 1;
   });
   let count = ls_count_val;
   
-  
-  let ls_maxminutes_val
+  let ls_maxminutes_val = 75;
   const ls_maxminutes = writable('ls_maxminutes', 75);  
   const unsubscribe_maxminutes = ls_maxminutes.subscribe(value => {    
-    ls_maxminutes_val = value;
+    ls_maxminutes_val = value || 75;
   });
   let maxminutes = ls_maxminutes_val;
   
-  
-  let ls_items_val
+  let ls_items_val = 6;
   const ls_items = writable('ls_items', 6);  
   const unsubscribe_items = ls_items.subscribe(value => {    
-    ls_items_val = value;
+    ls_items_val = value || 6;
   });
   let items = ls_items_val;
   
+  let timers = [];
+  let editingTimer = null; // Track which timer is being edited
+  let editMinutes = 0;
+  let editItems = 0;
   
-  let ls_timers_val;
-  const ls_timers = writable('ls_timers', null);
+  const ls_timers = writable('ls_timers', []);
   const unsubscribe_timers = ls_timers.subscribe(value => {
-    // our local persistent store returns parsed objects (not double-encoded strings)
-    ls_timers_val = value;
-    console.log(ls_timers_val);
+    if (Array.isArray(value)) {
+      timers = value;
+    } else if (value && typeof value === 'object') {
+      timers = Object.values(value);
+    } else {
+      timers = [];
+    }
+    // Fixed: Use requestAnimationFrame instead of setTimeout(0)
+    requestAnimationFrame(() => {
+      try { 
+        TimeInfo(); 
+      } catch (e) { 
+        console.error('TimeInfo error:', e);
+      }
+    });
   });
-  let timers = ls_timers_val || [];
-  TimeInfo();
-  
   
   function alertvoice(id){
-   responsiveVoice.speak(
-    "Timer " + id + ', sudah habis waktu',
-    "Indonesian Female",
-    {
-     pitch: 1, 
-     rate: 1, 
-     volume: 1
+    if (typeof responsiveVoice !== 'undefined') {
+      responsiveVoice.speak(
+        "Timer " + id + ', sudah habis waktu',
+        "Indonesian Female",
+        {
+          pitch: 1, 
+          rate: 1, 
+          volume: 1
+        }
+      );
     }
-   );
   }
 
-  function diff_minutes(date_now, date_future) 
-  {
-      if (date_now > date_future){
-          return {m: 0, s:0}
-      }
-      
-      // get total seconds between the times
-      var delta = Math.abs(date_future - date_now) / 1000;
-      //var delta = (date_future - date_now) / 1000;
-      console.log('delta', delta, date_now > date_future)
-      // calculate (and subtract) whole days
-      var days = Math.floor(delta / 86400);
-      delta -= days * 86400;
+  function diff_minutes(date_now, date_future) {
+    if (date_now > date_future){
+      return {m: 0, s: 0}
+    }
+    
+    var delta = Math.abs(date_future - date_now) / 1000;
+    
+    var days = Math.floor(delta / 86400);
+    delta -= days * 86400;
 
-      // calculate (and subtract) whole hours
-      var hours = Math.floor(delta / 3600) % 24;
-      delta -= hours * 3600;
+    var hours = Math.floor(delta / 3600) % 24;
+    delta -= hours * 3600;
 
-      // calculate (and subtract) whole minutes
-      var minutes = Math.floor(delta / 60) % 60;
-      delta -= minutes * 60;
+    var minutes = Math.floor(delta / 60) % 60;
+    delta -= minutes * 60;
 
-      // what's left is seconds
-      var seconds = Math.floor(delta % 60);  // in theory the modulus is not required  
-      
-      var dif = (date_future - date_now); 
-      var dif = Math.floor((dif/1000)/60);    
+    var seconds = Math.floor(delta % 60);
+    
+    var dif = Math.floor((date_future - date_now) / 60000);
 
-      return {m: dif, s:seconds}
+    return {m: dif, s: seconds}
   }
  
   function countdown(element, minutes, seconds, _minuteadd) {
-    // Fetch the display element
-    var el = element; //document.getElementById(element);
+    var el = element;
 
+    // Fixed: Added safety check
     var timerIntervalID = timers.filter(function(timer){
       return timer.tid == el.id
     });
     
+    if (!timerIntervalID || timerIntervalID.length === 0) {
+      console.error('Timer not found for id:', el.id);
+      return;
+    }
+    
     let date_now = new Date();
-    let date_future = new Date(timerIntervalID[0]['finish_full'])
-    console.log(date_now,date_future)
+    let date_future = new Date(timerIntervalID[0]['finish_full']);
     
-    let delta_time = diff_minutes(date_now,date_future)
-    console.log('delta_time',delta_time)
+    let delta_time = diff_minutes(date_now, date_future);
     
-    minutes = delta_time.m; seconds = delta_time.s;
+    minutes = delta_time.m; 
+    seconds = delta_time.s;
+    
+    // Fixed: Clear existing interval if any
+    if (timerIntervalID[0]['timercontrol']) {
+      clearInterval(timerIntervalID[0]['timercontrol']);
+    }
     
     timerIntervalID[0]['timercontrol'] = setInterval(function() {
-
-    // Set the timer
-      //var interval = setInterval(function() {
-
-        if(seconds == 0) {
-          if(minutes == 0) {
-            document.getElementById('card-' + el.id).scrollIntoView();
-            
-            let elparent = el.parentNode.parentNode;
-            //elparent.classList.add(['error', 'card-off']);
-            elparent.className += ' error card-off '
-            
-            //el.parentNode.remove();
-            el.parentElement.innerHTML = "Time's Up";
-
-            //clearInterval(interval);
-            clearInterval(timerIntervalID[0]['timercontrol']);
-            alertvoice(el.id);
-            
-            timers.forEach(function(a,b) {
-              if (a.tid == el.id){
-                timers[b].done = true;
-                TimeInfo()
-              }
-            });
-
-            return;
-          } else {
-                minutes--;
-                seconds = 60;
+      if(seconds == 0) {
+        if(minutes == 0) {
+          // Fixed: Added safety check for DOM element
+          let cardElement = document.getElementById('card-' + el.id);
+          if (cardElement) {
+            cardElement.scrollIntoView();
+            cardElement.className += ' error card-off ';
           }
-        }
+          
+          if (el.parentElement) {
+            el.parentElement.innerHTML = "Time's Up";
+          }
 
-        if(minutes > 0) {
-            var minute_text = minutes + (minutes > 1 ? ' minutes' : ' minute');
+          clearInterval(timerIntervalID[0]['timercontrol']);
+          alertvoice(el.id);
+          
+          timers.forEach(function(a, b) {
+            if (a.tid == el.id){
+              timers[b].done = true;
+            }
+          });
+          
+          // Fixed: Update store after modification
+          ls_timers.set(timers);
+          TimeInfo();
+
+          return;
         } else {
-            var minute_text = '';
+          minutes--;
+          seconds = 60;
         }
+      }
 
-        var second_text = seconds > 1 ? '' : '';
-        //el.innerHTML = minute_text + ' ' + seconds + ' ' + second_text + '';
-        let timerun = document.getElementsByClassName("timer-" + el.id);
-        let timertext = minute_text + ' ' + seconds + ' ' + second_text + '';
-        for (let i = 0; i < timerun.length; i++){
-          timerun[i].innerHTML = timertext;
-        }        
-        seconds--;
-        /*
-        minutes += ((!!_minuteadd && _minuteadd > 0) ? _minuteadd:0);
-        minuteadd = 0;
-        */
+      if(minutes > 0) {
+        var minute_text = minutes + (minutes > 1 ? ' minutes' : ' minute');
+      } else {
+        var minute_text = '';
+      }
+
+      var second_text = seconds > 1 ? '' : '';
+      let timerun = document.getElementsByClassName("timer-" + el.id);
+      let timertext = minute_text + ' ' + seconds + ' ' + second_text + '';
+      for (let i = 0; i < timerun.length; i++){
+        timerun[i].innerHTML = timertext;
+      }        
+      seconds--;
     }, 1000);
   }
 
   function countdwn(node){
-    //countdown(node,0,maxminutes)
-    countdown(node,maxminutes,0)
+    countdown(node, maxminutes, 0);
   }
 
-  /*
-  https://www.educative.io/edpresso/how-to-sort-an-array-of-objects-in-javascript
-  */
-  function dynamicsort(property,order) {
+  function dynamicsort(property, order) {
     var sort_order = 1;
     if(order === "desc"){
-        sort_order = -1;
+      sort_order = -1;
     }
     return function (a, b){
-        // a should come before b in the sorted order
-        if(a[property] < b[property]){
-                return -1 * sort_order;
-        // a should come after b in the sorted order
-        }else if(a[property] > b[property]){
-                return 1 * sort_order;
-        // a and b are the same
-        }else{
-                return 0 * sort_order;
-        }
+      if(a[property] < b[property]){
+        return -1 * sort_order;
+      }else if(a[property] > b[property]){
+        return 1 * sort_order;
+      }else{
+        return 0 * sort_order;
+      }
     }
   }
 
   function TimeInfo(){
-    timeractive = '-'; firststart = '-'; 
-    lastfinish =  '-'; earlyfinish = '-';
+    timeractive = '-'; 
+    firststart = '-'; 
+    lastfinish = '-'; 
+    earlyfinish = '-';
 
+    if (!timers || timers.length == 0) {
+      return;
+    } 
+    
     let timeractive_ = timers.filter(function(timer){
       return timer.remove == false && timer.done == false
     });
     timeractive = timeractive_.length;
 
-    console.log('time info')
     if (timeractive_.length == 0){
       timeractive = '-';
       timeractive_ = timers.filter(function(timer){
@@ -227,53 +234,57 @@
     }
 
     if (!!timeractive_ && timeractive_.length > 0){
-      let ds = timeractive_.sort(dynamicsort('start_full','asc'));
-      console.log(ds);
+      let ds = timeractive_.sort(dynamicsort('start_full', 'asc'));
       firststart = ds[0].start_at + ' (' + ds[0].text + ')';
 
-      ds = timeractive_.sort(dynamicsort('finish_full','desc'));
+      ds = timeractive_.sort(dynamicsort('finish_full', 'desc'));
       lastfinish = ds[0].finish_at + ' (' + ds[0].text + ')' + '<br /> <span class="timer-' + ds[0].tid + '"></span>';
 
-      ds = timeractive_.sort(dynamicsort('finish_full','asc'));
+      ds = timeractive_.sort(dynamicsort('finish_full', 'asc'));
       earlyfinish = ds[0].finish_at + ' (' + ds[0].text + ')' + '<br /> <span class="timer-' + ds[0].tid + '"></span>';
-
-      
     } else {
       let timeremove = timers.filter(function(timer){
         return timer.remove == true
       });
-      if (timers.length == timeremove.length){ count = 1; timers = []; ls_count.set(count)}
+      if (timers.length == timeremove.length){ 
+        count = 1; 
+        timers = []; 
+        ls_count.set(count);
+        ls_timers.set(timers);
+      }
     }
     
-    header = document.getElementById("summary");
-    if (!!header && !sticky){
-      // Get the offset position of the navbar
-      console.log('header', header)
-      sticky = header.offsetTop; // + header.clientHeight;
+    // Fixed: Moved sticky header logic to onMount
+    if (!header) {
+      header = document.getElementById("summary");
+      if (header) {
+        sticky = header.offsetTop;
+      }
     }
   }
 
   function addTimer(){
-    if (!maxminutes || maxminutes < 1){
-      alert('max minutes harus lebih besar dari 0');
-      return
+    // Fixed: Better validation
+    if (!maxminutes || maxminutes < 1 || !Number.isFinite(maxminutes)){
+      alert('Menit harus lebih besar dari 0');
+      return;
     }
 
     ls_maxminutes.set(maxminutes);
     
     let xstart_at = new Date();
-    let xfinish_at = new Date(xstart_at.getTime() + (maxminutes*60000));
+    let xfinish_at = new Date(xstart_at.getTime() + (maxminutes * 60000));
     
     let xstart = xstart_at;
     let xfinish = xfinish_at;    
     
-    xstart = (xstart.getHours()<10 ? '0' + xstart.getHours():xstart.getHours())
-      + ':' + (xstart.getMinutes() < 10 ? '0' + xstart.getMinutes():xstart.getMinutes()) 
-      + ':' + (xstart.getSeconds() < 10 ? '0' + xstart.getSeconds():xstart.getSeconds());
+    xstart = (xstart.getHours() < 10 ? '0' + xstart.getHours() : xstart.getHours())
+      + ':' + (xstart.getMinutes() < 10 ? '0' + xstart.getMinutes() : xstart.getMinutes()) 
+      + ':' + (xstart.getSeconds() < 10 ? '0' + xstart.getSeconds() : xstart.getSeconds());
     
-    xfinish = (xfinish.getHours()<10 ? '0' + xfinish.getHours():xfinish.getHours())
-      + ':' + (xfinish.getMinutes()<10 ? '0' + xfinish.getMinutes():xfinish.getMinutes())
-      + ':' + (xfinish.getSeconds()<10 ? '0' + xfinish.getSeconds():xfinish.getSeconds());
+    xfinish = (xfinish.getHours() < 10 ? '0' + xfinish.getHours() : xfinish.getHours())
+      + ':' + (xfinish.getMinutes() < 10 ? '0' + xfinish.getMinutes() : xfinish.getMinutes())
+      + ':' + (xfinish.getSeconds() < 10 ? '0' + xfinish.getSeconds() : xfinish.getSeconds());
 
     timers = timers.concat({
       tid: count, 
@@ -282,55 +293,55 @@
       start_at: xstart, 
       finish_at: xfinish,
       maxminute: maxminutes,
+      items: items, // Save items value when timer is created
       start_full: xstart_at,
       finish_full: xfinish_at,
       done: false
-    })
+    });
+    
     ls_timers.set(timers);
-    
     count += 1;
-    ls_count.set(count)
-    
+    ls_count.set(count);
     TimeInfo();
   }
 
-  function rmv(){
-    let idtimer = this.parentNode.innerText.replace('Timer ','');
+  function deleteTimer(timerId) {
     var timerIntervalID = timers.filter(function(timer){
-      return timer.tid == idtimer
+      return timer.tid == timerId
     });
-    console.log(timerIntervalID);
 
-    if (confirm("Hapus " + this.parentNode.innerText + "?")){
+    if (timerIntervalID.length === 0) {
+      console.error('Timer not found');
+      return;
+    }
+
+    if (confirm("Hapus Timer " + timerId + "?")){
       clearInterval(timerIntervalID[0]['timercontrol']);
-      //this.parentNode.parentNode.remove();
         
-      timers.forEach(function(a,b) {
-        if (a.tid == idtimer){
+      timers.forEach(function(a, b) {
+        if (a.tid == timerId){
           timers[b].remove = true;
-          TimeInfo()
-          ls_timers.set(timers);
         }
       });
-      //console.log(timers_rmv_arr, timers)
+      
+      ls_timers.set(timers);
+      TimeInfo();
     }
   }
 
   function deleteAllTimers(){
     if (timers.length === 0){
-      alert('No timers to delete');
+      alert('Tidak ada timer untuk dihapus');
       return;
     }
 
-    if (confirm("Delete all " + timers.length + " timers? This cannot be undone.")){
-      // Clear all intervals
+    if (confirm("Hapus semua " + timers.length + " timer? Ini tidak bisa dibatalkan.")){
       timers.forEach(function(timer){
         if (timer.timercontrol){
           clearInterval(timer.timercontrol);
         }
       });
       
-      // Reset timers and counters
       timers = [];
       count = 1;
       ls_timers.set(timers);
@@ -338,73 +349,142 @@
       TimeInfo();
     }
   }
-  /*
-  function add_more(minadd){
-    
-    //let _minuteadd = prompt("Add more minutes?");
-    let txt;
-    if (minadd == null || minadd == "" || minadd < 1) {
-      txt = "input not valid";
-    } else {
-      txt = "ok, you add more " + minadd + ' minute(s)';
-      //minuteadd = minadd
-    } 
-    console.log(minadd)
-  }
-  */
 
- /* 
- https://nandovieira.com/supporting-dark-mode-in-web-content 
- https://davidwalsh.name/css-variables-javascript
- */
- function isDarkMode() {    
+  function startEditTimer(timerId) {
+    const timer = timers.find(t => t.tid === timerId);
+    if (timer && !timer.done) {
+      editingTimer = timerId;
+      editMinutes = timer.maxminute;
+      editItems = timer.items;
+    }
+  }
+
+  function cancelEdit() {
+    editingTimer = null;
+    editMinutes = 0;
+    editItems = 0;
+  }
+
+  function saveEditTimer(timerId) {
+    if (!editMinutes || editMinutes < 1 || !Number.isFinite(editMinutes)) {
+      alert('Menit harus lebih besar dari 0');
+      return;
+    }
+
+    if (!editItems || editItems < 1 || !Number.isInteger(editItems)) {
+      alert('Items harus lebih besar dari 0');
+      return;
+    }
+
+    const timerIndex = timers.findIndex(t => t.tid === timerId);
+    if (timerIndex === -1) return;
+
+    const timer = timers[timerIndex];
+    
+    // Keep original start time, only recalculate finish time
+    // Convert to Date object if it's a string (from localStorage)
+    let xstart_at = timer.start_full instanceof Date ? timer.start_full : new Date(timer.start_full);
+    let xfinish_at = new Date(xstart_at.getTime() + (editMinutes * 60000));
+    
+    // Validate: finish time must be in the future
+    let now = new Date();
+    if (xfinish_at <= now) {
+      alert('Waktu finish sudah lewat! Tambahkan lebih banyak menit.\n\nStart: ' + 
+            xstart_at.toLocaleTimeString() + 
+            '\nFinish akan jadi: ' + xfinish_at.toLocaleTimeString() + 
+            '\nSekarang: ' + now.toLocaleTimeString());
+      return;
+    }
+    
+    // Clear existing interval
+    if (timer.timercontrol) {
+      clearInterval(timer.timercontrol);
+    }
+
+    // Format finish time only
+    let xfinish = (xfinish_at.getHours() < 10 ? '0' + xfinish_at.getHours() : xfinish_at.getHours())
+      + ':' + (xfinish_at.getMinutes() < 10 ? '0' + xfinish_at.getMinutes() : xfinish_at.getMinutes())
+      + ':' + (xfinish_at.getSeconds() < 10 ? '0' + xfinish_at.getSeconds() : xfinish_at.getSeconds());
+
+    // Update timer (keep original start_at and start_full)
+    timers[timerIndex] = {
+      ...timer,
+      maxminute: editMinutes,
+      items: editItems,
+      finish_at: xfinish,
+      finish_full: xfinish_at,
+      done: false
+    };
+
+    ls_timers.set(timers);
+    TimeInfo();
+    
+    // Restart countdown with remaining time
+    setTimeout(() => {
+      const element = document.getElementById(timerId.toString());
+      if (element) {
+        countdown(element, editMinutes, 0);
+      }
+    }, 100);
+
+    cancelEdit();
+  }
+
+  function isDarkMode() {    
     if (
       window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches
     ) {
       document.documentElement.style.setProperty('--back-color', '#212529');
       document.documentElement.style.setProperty('--fore-color', '#6c757d');
-
       document.documentElement.style.setProperty('--card-back-color', '#31383e');
       document.documentElement.style.setProperty('--card-fore-color', '#6c757d');
       document.documentElement.style.setProperty('--card-border-color', '#464f57');
-
       document.documentElement.style.setProperty('--footer-back-color', '#212529');
       document.documentElement.style.setProperty('--footer-border-color', '#464f57');
-
       document.documentElement.style.setProperty('--sticky-shadow', '#ccc');
     }
   }
-  isDarkMode();
   
-  /*
-  https://jsfiddle.net/nd9etLjy/1/
-  https://stackoverflow.com/questions/47945890/how-do-i-make-a-dynamic-sticky-toolbar-without-weird-scroll-glitch-when-page-is
-  */
-  window.onscroll = function() {myFunction()};    
-  // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
-  function myFunction() {
-    var containerd = document.getElementsByClassName("containerd");
-    if (!!header){
-      if (window.pageYOffset > sticky) {
-      header.classList.add("sticky");
-      containerd[0].classList.add('sticky-containerd');
-      
-    } else {
-      header.classList.remove("sticky");
-      containerd[0].classList.remove('sticky-containerd');
-    }
-    }    
-  }   
+  // Fixed: Call isDarkMode on mount
+  if (typeof window !== 'undefined') {
+    isDarkMode();
+  }
+  
+  // Fixed: Proper scroll handler with height check
+  if (typeof window !== 'undefined') {
+    window.onscroll = function() {
+      if (header && typeof sticky !== 'undefined') {
+        var containerd = document.getElementsByClassName("containerd");
+        
+        // Check if summary takes too much space (more than 40% of viewport)
+        const summaryHeight = header.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        const summaryRatio = summaryHeight / viewportHeight;
+        
+        // Only make sticky if summary is less than 40% of viewport height
+        if (summaryRatio < 0.4 && window.pageYOffset > sticky) {
+          header.classList.add("sticky");
+          if (containerd[0]) {
+            containerd[0].classList.add('sticky-containerd');
+          }
+        } else {
+          header.classList.remove("sticky");
+          if (containerd[0]) {
+            containerd[0].classList.remove('sticky-containerd');
+          }
+        }
+      }
+    };
+  }
 </script>
 
 <main>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe title="gtag" src="https://www.googletagmanager.com/ns.html?id=GTM-MSNW3DF"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-
-	<h1>Donut Timer</h1>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe title="gtag" src="https://www.googletagmanager.com/ns.html?id=GTM-MSNW3DF"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <h1>Donut Timer</h1>
 </main>
 
 <centerx>
@@ -412,14 +492,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="row">
       <div class="col-sm-3" style="display: flex; flex-direction: column;">
         <label for="input_menit" style="margin-bottom: 0.25rem;"><small>Minutes</small></label>
-        <input type="number" id="input_menit" placeholder="minutes" bind:value={maxminutes} style="margin: 0;" />
+        <input type="number" id="input_menit" placeholder="minutes" bind:value={maxminutes} style="margin: 0;" min="1" />
       </div>
       <div class="col-sm-3" style="display: flex; flex-direction: column;">
         <label for="input_items" style="margin-bottom: 0.25rem;"><small>Items</small></label>
         <input type="number" id="input_items" placeholder="items" bind:value={items} min="1" style="margin: 0;" on:change={() => {
-          // Validate: must be integer, min 1
           if (!Number.isInteger(items) || items < 1) {
-            items = 6; // Reset to default
+            items = 6;
           }
           ls_items.set(items);
         }} />
@@ -433,7 +512,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div id="summaryx">
     {#if count > 1 }
-    
       <div class="row">
         <div class="col-sm-6">
           <h6><small>First Start</small>
@@ -459,15 +537,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </h6>
         </div>
       </div>
-
-      <div class="row" style="margin-top: 1rem;">
-        <div class="col-sm-12">
-          <button on:click={deleteAllTimers} class="xprimary secondary shadowed" style="width: 100%; margin: 0; padding: 7px 0px;">
-            <span style="position: relative; top: 3px;padding-right: 5px;"><Trash2Icon size="20" /></span><span>Delete All</span>
-          </button>
-        </div>
-      </div>
-    
     {/if}
     </div>
   </div>
@@ -476,89 +545,130 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="containerd">
 <div class="row">
 {#each timers as timer}
-
-  <div id={'card-' + timer.tid} class="card fluid {timer.remove ? 'remove_timer':''}">
-    <div class="section">
-      <h4 style="margin-left: 0px;">Timer {timer.tid}</h4>
-      <button class="xprimary rmv {timer.remove ? '':'secondary'}" on:click={timer.remove ? null:rmv}>
-        <Trash2Icon size="16" />
-      </button>
-    </div>
-
-    <div class="section">
-      <div>
-        <TargetIcon size="20" /> <span class="justinfo">{timer.maxminute} menit</span>
-      </div>
-      <div>
-        <PackageIcon size="20" /> <span class="justinfo">{items} items</span>
-      </div>
-      <div>
-        <ClockIcon size="20" /> <span class="justinfo">{timer.start_at}</span>
-      </div>
-      <div>
-        <StopCircleIcon size="20" /> <span class="justinfo">{timer.finish_at}</span>
+  {#if !timer.remove}
+  <div id={'card-' + timer.tid} class="col-md-2 col-sm-6 col-xs-12" style="margin-bottom: 20px;">
+    <div class="card fluid">
+      <div class="section" style="position: relative; display: flex; align-items: center; justify-content: space-between;">
+        <h4 style="margin: 0;">Timer {timer.tid}</h4>
+        <button class="xprimary secondary" on:click={() => deleteTimer(timer.tid)} style="margin: 0; padding: 4px 8px;">
+          <Trash2Icon size="16" />
+        </button>
       </div>
 
-      <!--
-      <div>
-      <label for="modal-control">add minute</label>
-
-      <input type="checkbox" id="modal-control" class="modal">
-      <div>
-        <div class="card">
-          <label for="modal-control" class="modal-close" ></label>
-          <h3 class="section">Add more minutes...</h3>      
-          <input id="txtminuteadd" type="number" placeholder="add more minutes"/>  
-          <button class="primar" on:click={add_more('3')}>
-            add minute(s)
-          </button>    
+      {#if editingTimer === timer.tid}
+      <div class="section edit-section">
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <div style="flex: 1;">
+            <label for="edit-minutes-{timer.tid}" style="display: block; margin-bottom: 4px;"><small>Minutes</small></label>
+            <input 
+              type="number" 
+              id="edit-minutes-{timer.tid}"
+              bind:value={editMinutes} 
+              min="1"
+              style="width: 100%; margin: 0;"
+            />
+          </div>
+          <div style="flex: 1;">
+            <label for="edit-items-{timer.tid}" style="display: block; margin-bottom: 4px;"><small>Items</small></label>
+            <input 
+              type="number" 
+              id="edit-items-{timer.tid}"
+              bind:value={editItems} 
+              min="1"
+              style="width: 100%; margin: 0;"
+            />
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button 
+            on:click={() => saveEditTimer(timer.tid)} 
+            class="primary" 
+            style="flex: 1; margin: 0; padding: 6px 0;">
+            <span style="position: relative; top: 3px;"><SaveIcon size="16" /></span> Save
+          </button>
+          <button 
+            on:click={cancelEdit} 
+            class="secondary" 
+            style="flex: 1; margin: 0; padding: 6px 0;">
+            <span style="position: relative; top: 3px;"><XIcon size="16" /></span> Cancel
+          </button>
         </div>
       </div>
-    </div>
-    -->
-    </div>
-    
+      {:else}
+      <div class="section">
+        <div>
+          <TargetIcon size="20" /> <span class="justinfo">{timer.maxminute} menit</span>
+        </div>
+        <div>
+          <PackageIcon size="20" /> <span class="justinfo">{timer.items} items</span>
+        </div>
+        <div>
+          <ClockIcon size="20" /> <span class="justinfo">{timer.start_at}</span>
+        </div>
+        <div>
+          <StopCircleIcon size="20" /> <span class="justinfo">{timer.finish_at}</span>
+        </div>
+      </div>
 
-    <div class="section to-center ">
-      <mark class="tertiary timer-{timer.tid}" id={timer.tid} use:countdwn></mark>
+      <div class="section to-center">
+        <mark class="tertiary timer-{timer.tid}" id={timer.tid} use:countdwn></mark>
+      </div>
+
+      {#if !timer.done}
+      <div class="section" style="padding-top: 0;">
+        <button class="xprimary secondary" on:click={() => startEditTimer(timer.tid)} style="width: 100%; margin: 0; padding: 6px 0;">
+          <span style="position: relative; top: 3px;"><EditIcon size="16" /></span> Edit Timer
+        </button>
+      </div>
+      {/if}
+      {/if}
     </div>
   </div>
+  {/if}
 {/each}
 </div>
 </div>
 
-<footer style="margin-top: 20px; ">
+{#if count > 1 }
+<div class="row">
+  <div class="col-sm-12 col-md-12 col-lg-12">
+    <button on:click={deleteAllTimers} class="xprimary secondary shadowed" style="width: 100%; margin: 0">
+      <span style="position: relative; top: 3px;padding-right: 5px;"><Trash2Icon size="20" /></span><span>Delete All</span>
+    </button>
+  </div>
+</div>
+{/if}
+
+<footer style="margin-top: 20px;">
 <center>
-    <div class="row">
-        <div class="col-sm-12">
-            <a href="https://www.svelte.dev">
-                <img src="/svelte.png" style="height: 48px" alt="svelte" />
-            </a>
-             <a href="https://www.github.com">
-                <img style="height: 48px" src="https://cdn3.iconfinder.com/data/icons/social-media-2034/500/github-64.png" alt="Host on Github" />
-            </a>
-            <a href="https://www.netlify.com">
-                <img style="height: 48px" src="https://www.netlify.com/img/global/badges/netlify-color-accent.svg" alt="Deploys by Netlify" />
-            </a>
-        </div>
-        <div class="col-sm-12">
-            V8.C0D3 - v2025.11
-        </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <a href="https://www.svelte.dev">
+        <img src="/svelte.png" style="height: 48px" alt="svelte" />
+      </a>
+      <a href="https://www.github.com">
+        <img style="height: 48px" src="https://cdn3.iconfinder.com/data/icons/social-media-2034/500/github-64.png" alt="Host on Github" />
+      </a>
+      <a href="https://www.netlify.com">
+        <img style="height: 48px" src="https://www.netlify.com/img/global/badges/netlify-color-accent.svg" alt="Deploys by Netlify" />
+      </a>
     </div>
-  </center> 
+    <div class="col-sm-12">
+      v25.11
+    </div>
+  </div>
+</center> 
 </footer>
 
-
 <style> 
-   .card.card-off > div * {
-      color: #eca4a4 !important;
-      text-decoration: line-through;
+  .card.card-off > div * {
+    color: #eca4a4 !important;
+    text-decoration: line-through;
   }
     
   html,
   body {
-      overscroll-behavior-y: contain;
-      
+    overscroll-behavior-y: contain;
   }
 
   .remove_timer {    
@@ -567,55 +677,49 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   main {
     color: yellowgreen;
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
+    text-align: center;
+    padding: 1em;
+    max-width: 240px;
+    margin: 0 auto;
+  }
 
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
+  h1 {
+    color: #ff3e00;
+    text-transform: uppercase;
+    font-size: 4em;
+    font-weight: 100;
+  }
 
-	@media (min-width: 640px) {
+  @media (min-width: 640px) {
     main {
-			max-width: none;
-		}
+      max-width: none;
+    }
   }
-
-  .card.fluid{
-    max-width: 100%;
-    min-width: 44%;
-  }
+  
   .to-center{
     text-align: center;
   }
+  
   .justinfo{
     position: relative;
     top: -4px;
     left: 3px;
   }
+  
   .xprimary {
-    /*background: transparent;
-    position: relative;
-    left: -18px;
-    top: 8px;
-    border-radius: 50%;
-    margin: auto;
-    */
     margin-top: 3px
   }
-  .rmv{
-    position: absolute;
-    top: 6px;
-    left: 67%;
+
+  .edit-section {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 15px !important;
+    border-radius: 8px;
   }
+  
   #input_menit, #input_items{
     width: 100%;
   }
+  
   .sticky{
     position: fixed;
     top: 0;
