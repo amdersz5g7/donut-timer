@@ -1,98 +1,133 @@
-*Looking for a shareable component template? Go here --> [sveltejs/component-template](https://github.com/sveltejs/component-template)*
+# 🍩 Donut Timer
+
+A multi-timer countdown web application for managing multiple parallel timers with persistent state storage. Perfect for kitchen timers, workout intervals, task scheduling, and more!
+
+**Features:**
+- ⏱️ Create and manage multiple timers simultaneously
+- 💾 Persistent storage (timers saved in browser localStorage)
+- 🌙 Dark mode support (auto-detected from system preferences)
+- 🔊 Indonesian voice alerts when timers complete
+- 📊 Real-time timer status summary (first start, last finish, early finish times)
+- 📱 Responsive design for desktop and mobile
+- 🎨 Built with Svelte and mini.css framework
+
+Status
+- Framework: Svelte (v3)
+- Build: Rollup (v2)
 
 ---
 
-# svelte app
+## Quick Start
 
-This is a project template for [Svelte](https://svelte.dev) apps. It lives at https://github.com/sveltejs/template.
+### Prerequisites
+- Node.js 14+ (Node 18+ recommended)
 
-To create a new project based on this template using [degit](https://github.com/Rich-Harris/degit):
-
-```bash
-npx degit sveltejs/template svelte-app
-cd svelte-app
-```
-
-*Note that you will need to have [Node.js](https://nodejs.org) installed.*
-
-
-## Get started
-
-Install the dependencies...
+### Install & Run (Development)
 
 ```bash
-cd svelte-app
+# clone
+git clone https://github.com/amdersz5g7/kitchen-timer.git
+cd kitchen-timer
+
+# install deps
 npm install
-```
 
-...then start [Rollup](https://rollupjs.org):
-
-```bash
+# start dev server (Rollup watch + sirv)
 npm run dev
 ```
 
-Navigate to [localhost:5000](http://localhost:5000). You should see your app running. Edit a component file in `src`, save it, and reload the page to see your changes.
+Open http://localhost:5000 in your browser. The dev server supports hot-reload when you edit files under `src/`.
 
-By default, the server will only respond to requests from localhost. To allow connections from other computers, edit the `sirv` commands in package.json to include the option `--host 0.0.0.0`.
+Note: if you hit peer-dependency warnings during `npm install`, use `npm install --legacy-peer-deps` as a fallback for older packages.
 
-
-## Building and running in production mode
-
-To create an optimised version of the app:
+### Build / Serve (Production)
 
 ```bash
+# produce optimized build into `public/build`
 npm run build
+
+# serve the built site (sirv)
+npm start
+
+# optionally expose on network
+npm start -- --host 0.0.0.0
 ```
 
-You can run the newly built app with `npm run start`. This uses [sirv](https://github.com/lukeed/sirv), which is included in your package.json's `dependencies` so that the app will work when you deploy to platforms like [Heroku](https://heroku.com).
+The production bundle is placed in `public/build/` and can be deployed to any static host (Netlify, Vercel, GitHub Pages, etc.).
 
+---
 
-## Single-page app mode
+## How to Use
 
-By default, sirv will only respond to requests that match files in `public`. This is to maximise compatibility with static fileservers, allowing you to deploy your app anywhere.
+1. Set a duration (minutes) and optionally the number of items (default: 6).
+2. Click `Add Timer` to create a new countdown. Each timer shows remaining time and items.
+3. Timers persist automatically to `localStorage` — refresh the page and they remain.
+4. When a timer completes it will be marked done and trigger a voice alert (Indonesian voice).
+5. You can delete individual timers or use the `Delete All` button (with confirmation) to clear everything.
 
-If you're building a single-page app (SPA) with multiple routes, sirv needs to be able to respond to requests for *any* path. You can make it so by editing the `"start"` command in package.json:
+---
 
-```js
-"start": "sirv public --single"
+## Project Structure (high level)
+
+```
+kitchen-timer/
+├── src/
+│   ├── App.svelte          # Main app component (UI + logic)
+│   ├── main.js             # App bootstrap
+│   ├── lib/
+│   │   └── persistent.js   # small local persistent store helper (localStorage)
+│   └── scripts/
+│       └── gtag.js         # GA helper
+├── public/
+│   ├── index.html          # HTML shell
+│   └── build/              # generated bundle (bundle.js, bundle.css)
+├── rollup.config.js
+└── package.json
 ```
 
+Implementation notes
+- The project uses a small `src/lib/persistent.js` helper to persist Svelte stores to `localStorage`. This replaced the previous external dependency to avoid compatibility issues with newer build tools.
 
-## Deploying to the web
+---
 
-### With [now](https://zeit.co/now)
+## Scripts
 
-Install `now` if you haven't already:
+- `npm run dev` — start development server with watch + hot reload (port 5000)
+- `npm run build` — compile optimized production bundle into `public/build`
+- `npm start` — serve `public/` using `sirv-cli`
 
-```bash
-npm install -g now
-```
+---
 
-Then, from within your project folder:
+## Internals & Technical Notes
 
-```bash
-cd public
-now deploy --name my-project
-```
+- State: timers and small settings are persisted in `localStorage` via the local persistent store. The app keeps an ever-incrementing `ls_count` to avoid ID collisions.
+- Countdown: each timer stores a `finish_full` timestamp and is updated via `setInterval` every second. Interval IDs are tracked per-timer and cleared when timers are removed.
+- Alerts: voice alerts use ResponsiveVoice (Indonesian). If voice playback is blocked by the browser, the app falls back to visual markings.
+- Styling: uses `mini.css` for base layout + component-scoped CSS in `App.svelte`.
 
-As an alternative, use the [Now desktop client](https://zeit.co/download) and simply drag the unzipped project folder to the taskbar icon.
+Security note: The original code reconstructed objects using `eval` in some older implementations. The current persistent helper stores and restores plain data (no eval) and converts date strings to `Date` objects when needed.
 
-### With [surge](https://surge.sh/)
+---
 
-Install `surge` if you haven't already:
+## Known issues & TODOs
 
-```bash
-npm install -g surge
-```
+- Add-minute feature (extend an active timer) is currently not implemented and has a commented stub in the code.
+- Consider extracting `App.svelte` into smaller components for maintainability.
+- Add non-voice alert options (sound, desktop notifications).
 
-Then, from within your project folder:
+If you'd like help implementing any of the above, open an issue or a PR.
 
-```bash
-npm run build
-surge public my-project.surge.sh
-```
+---
 
-### Concern
-pop up alert causing stop timer countdown, find another alternative!
+## License
 
-add feature to extend more minute
+See the `LICENSE` file at the project root.
+
+---
+
+## Author
+
+Created and maintained by [amdersz5g7](https://github.com/amdersz5g7)
+
+**Last Updated**: 2025-11-29   
+**Version**: v2025.11
