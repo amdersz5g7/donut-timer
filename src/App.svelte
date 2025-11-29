@@ -20,10 +20,10 @@
 </svelte:head>
 
 <script>
-  import { PlusCircleIcon, PlusSquareIcon, ChevronsDownIcon, StopCircleIcon, CheckCircleIcon, ClockIcon, TargetIcon, Trash2Icon } from 'svelte-feather-icons'
+  import { PlusCircleIcon, PlusSquareIcon, ChevronsDownIcon, StopCircleIcon, CheckCircleIcon, ClockIcon, TargetIcon, Trash2Icon, PackageIcon } from 'svelte-feather-icons'
 
-  //https://github.com/andsala/svelte-persistent-store
-  import { writable, readable, derived, get } from 'svelte-persistent-store/dist/local';    
+  // Local persistent store helper (keeps behavior simple and avoids package export issues)
+  import { writable, readable, derived, get } from './lib/persistent.js';    
    
   let hours, minutes, seconds;
   let firststart = '-', lastfinish = '-', 
@@ -48,11 +48,20 @@
   let maxminutes = ls_maxminutes_val;
   
   
+  let ls_items_val
+  const ls_items = writable('ls_items', 6);  
+  const unsubscribe_items = ls_items.subscribe(value => {    
+    ls_items_val = value;
+  });
+  let items = ls_items_val;
+  
+  
   let ls_timers_val;
-  const ls_timers = writable('ls_timers', null);  
-  const unsubscribe_timers = ls_timers.subscribe(value => {    
-    ls_timers_val = eval(JSON.parse(value));    
-    console.log(ls_timers_val);    
+  const ls_timers = writable('ls_timers', null);
+  const unsubscribe_timers = ls_timers.subscribe(value => {
+    // our local persistent store returns parsed objects (not double-encoded strings)
+    ls_timers_val = value;
+    console.log(ls_timers_val);
   });
   let timers = ls_timers_val || [];
   TimeInfo();
@@ -60,7 +69,7 @@
   
   function alertvoice(id){
    responsiveVoice.speak(
-    "Timer ke " + id + ', sudah habis waktu',
+    "Timer " + id + ', sudah habis waktu',
     "Indonesian Female",
     {
      pitch: 1, 
@@ -70,36 +79,36 @@
    );
   }
 
-    function diff_minutes(date_now, date_future) 
-    {
-        if (date_now > date_future){
-            return {m: 0, s:0}
-        }
-        
-        // get total seconds between the times
-        var delta = Math.abs(date_future - date_now) / 1000;
-        //var delta = (date_future - date_now) / 1000;
-        console.log('delta', delta, date_now > date_future)
-        // calculate (and subtract) whole days
-        var days = Math.floor(delta / 86400);
-        delta -= days * 86400;
+  function diff_minutes(date_now, date_future) 
+  {
+      if (date_now > date_future){
+          return {m: 0, s:0}
+      }
+      
+      // get total seconds between the times
+      var delta = Math.abs(date_future - date_now) / 1000;
+      //var delta = (date_future - date_now) / 1000;
+      console.log('delta', delta, date_now > date_future)
+      // calculate (and subtract) whole days
+      var days = Math.floor(delta / 86400);
+      delta -= days * 86400;
 
-        // calculate (and subtract) whole hours
-        var hours = Math.floor(delta / 3600) % 24;
-        delta -= hours * 3600;
+      // calculate (and subtract) whole hours
+      var hours = Math.floor(delta / 3600) % 24;
+      delta -= hours * 3600;
 
-        // calculate (and subtract) whole minutes
-        var minutes = Math.floor(delta / 60) % 60;
-        delta -= minutes * 60;
+      // calculate (and subtract) whole minutes
+      var minutes = Math.floor(delta / 60) % 60;
+      delta -= minutes * 60;
 
-        // what's left is seconds
-        var seconds = Math.floor(delta % 60);  // in theory the modulus is not required  
-        
-        var dif = (date_future - date_now); 
-        var dif = Math.floor((dif/1000)/60);    
-  
-        return {m: dif, s:seconds}
-    }
+      // what's left is seconds
+      var seconds = Math.floor(delta % 60);  // in theory the modulus is not required  
+      
+      var dif = (date_future - date_now); 
+      var dif = Math.floor((dif/1000)/60);    
+
+      return {m: dif, s:seconds}
+  }
  
   function countdown(element, minutes, seconds, _minuteadd) {
     // Fetch the display element
@@ -269,7 +278,7 @@
     timers = timers.concat({
       tid: count, 
       remove: false, 
-      text: 'Timer ke-' + count, 
+      text: 'Timer ' + count, 
       start_at: xstart, 
       finish_at: xfinish,
       maxminute: maxminutes,
@@ -277,7 +286,7 @@
       finish_full: xfinish_at,
       done: false
     })
-    ls_timers.set(JSON.stringify(timers));
+    ls_timers.set(timers);
     
     count += 1;
     ls_count.set(count)
@@ -286,7 +295,7 @@
   }
 
   function rmv(){
-    let idtimer = this.parentNode.innerText.replace('Timer ke-','');
+    let idtimer = this.parentNode.innerText.replace('Timer ','');
     var timerIntervalID = timers.filter(function(timer){
       return timer.tid == idtimer
     });
@@ -300,10 +309,33 @@
         if (a.tid == idtimer){
           timers[b].remove = true;
           TimeInfo()
-          ls_timers.set(JSON.stringify(timers));
+          ls_timers.set(timers);
         }
       });
       //console.log(timers_rmv_arr, timers)
+    }
+  }
+
+  function deleteAllTimers(){
+    if (timers.length === 0){
+      alert('No timers to delete');
+      return;
+    }
+
+    if (confirm("Delete all " + timers.length + " timers? This cannot be undone.")){
+      // Clear all intervals
+      timers.forEach(function(timer){
+        if (timer.timercontrol){
+          clearInterval(timer.timercontrol);
+        }
+      });
+      
+      // Reset timers and counters
+      timers = [];
+      count = 1;
+      ls_timers.set(timers);
+      ls_count.set(count);
+      TimeInfo();
     }
   }
   /*
@@ -368,7 +400,7 @@
 
 <main>
 <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MSNW3DF"
+<noscript><iframe title="gtag" src="https://www.googletagmanager.com/ns.html?id=GTM-MSNW3DF"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
@@ -378,11 +410,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <centerx>
   <div id="summary" class="containerx">
     <div class="row">
-      <div class="col-sm-7">
-        <input type="number" id="input_menit" placeholder="minutes" bind:value={maxminutes} />
+      <div class="col-sm-3" style="display: flex; flex-direction: column;">
+        <label for="input_menit" style="margin-bottom: 0.25rem;"><small>Minutes</small></label>
+        <input type="number" id="input_menit" placeholder="minutes" bind:value={maxminutes} style="margin: 0;" />
       </div>
-      <div class="col-sm-5">
-        <button on:click={addTimer} class="xprimary primary shadowed">
+      <div class="col-sm-3" style="display: flex; flex-direction: column;">
+        <label for="input_items" style="margin-bottom: 0.25rem;"><small>Items</small></label>
+        <input type="number" id="input_items" placeholder="items" bind:value={items} min="1" style="margin: 0;" on:change={() => {
+          // Validate: must be integer, min 1
+          if (!Number.isInteger(items) || items < 1) {
+            items = 6; // Reset to default
+          }
+          ls_items.set(items);
+        }} />
+      </div>
+      <div class="col-sm-6" style="display: flex; align-items: flex-end; padding: 0 calc(var(--universal-padding) / 2);">
+        <button on:click={addTimer} class="xprimary primary shadowed" style="width: 100%; margin: 0; padding: 7px 0px;">
           <span style="position: relative; top: 3px;"><PlusCircleIcon size="20" /></span> <span>Add Timer</span>
         </button>
       </div>
@@ -416,6 +459,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </h6>
         </div>
       </div>
+
+      <div class="row" style="margin-top: 1rem;">
+        <div class="col-sm-12">
+          <button on:click={deleteAllTimers} class="xprimary secondary shadowed" style="width: 100%; margin: 0; padding: 7px 0px;">
+            <span style="position: relative; top: 3px;padding-right: 5px;"><Trash2Icon size="20" /></span><span>Delete All</span>
+          </button>
+        </div>
+      </div>
     
     {/if}
     </div>
@@ -428,7 +479,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <div id={'card-' + timer.tid} class="card fluid {timer.remove ? 'remove_timer':''}">
     <div class="section">
-      <h4 style="margin-left: 0px;">Timer ke-{timer.tid}</h4>
+      <h4 style="margin-left: 0px;">Timer {timer.tid}</h4>
       <button class="xprimary rmv {timer.remove ? '':'secondary'}" on:click={timer.remove ? null:rmv}>
         <Trash2Icon size="16" />
       </button>
@@ -437,6 +488,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="section">
       <div>
         <TargetIcon size="20" /> <span class="justinfo">{timer.maxminute} menit</span>
+      </div>
+      <div>
+        <PackageIcon size="20" /> <span class="justinfo">{items} items</span>
       </div>
       <div>
         <ClockIcon size="20" /> <span class="justinfo">{timer.start_at}</span>
@@ -476,11 +530,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <footer style="margin-top: 20px; ">
 <center>
     <div class="row">
-        
-        
         <div class="col-sm-12">
-            
-           
             <a href="https://www.svelte.dev">
                 <img src="/svelte.png" style="height: 48px" alt="svelte" />
             </a>
@@ -492,7 +542,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </a>
         </div>
         <div class="col-sm-12">
-            V8.C0d3 - 2020.05 - v3.2.0
+            V8.C0D3 - v2025.11
         </div>
     </div>
   </center> 
@@ -563,7 +613,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     top: 6px;
     left: 67%;
   }
-  #input_menit{
+  #input_menit, #input_items{
     width: 100%;
   }
   .sticky{
