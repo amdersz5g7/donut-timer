@@ -15,6 +15,7 @@
   import { debounce } from "./utils/debounce.js";
   import { scrollToElementWithOffset } from "./utils/timeUtils.js";
   import { SCROLL_OFFSET_PX } from "./utils/constants.js";
+  import { playBeep, resumeAudio } from "./utils/audio.js";
 
   // Constants
   const STICKY_THRESHOLD = 0.4; // 40% of viewport
@@ -90,16 +91,33 @@
   });
 
   function alertvoice(id) {
-    if (typeof responsiveVoice !== "undefined") {
-      responsiveVoice.speak(
-        "Timer " + id + ", sudah habis waktu",
-        "Indonesian Female",
-        {
-          pitch: 1,
-          rate: 1,
-          volume: 1,
-        },
-      );
+    const text = "Timer " + id + ", sudah habis waktu";
+
+    // Try Native Web Speech API first (Offline & Native)
+    if ("speechSynthesis" in window) {
+      // Cancel any currently playing speech to avoid queue buildup
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "id-ID"; // Indonesian
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      // Fallback voice selection if needed
+      const voices = window.speechSynthesis.getVoices();
+      const idVoice = voices.find((v) => v.lang.includes("id"));
+      if (idVoice) utterance.voice = idVoice;
+
+      window.speechSynthesis.speak(utterance);
+    }
+    // Fallback to responsiveVoice if native API fails/missing
+    else if (typeof responsiveVoice !== "undefined") {
+      responsiveVoice.speak(text, "Indonesian Female", {
+        pitch: 1,
+        rate: 1,
+        volume: 1,
+      });
     }
   }
 
@@ -161,53 +179,74 @@
     }
 
     timerIntervalID[0]["timercontrol"] = setInterval(function () {
-      if (seconds == 0) {
-        if (minutes == 0) {
-          // Check again if timer is already done (prevent duplicate triggers)
-          const currentTimer = timers.find((t) => t.tid == el.id);
-          if (currentTimer && currentTimer.done) {
-            clearInterval(timerIntervalID[0]["timercontrol"]);
-            return; // Already processed, exit
-          }
+      // Recalculate remaining time to prevent drift and sync with summary
+      let now = new Date();
+      // Ensure finish_full is a Date object (might be string from JSON)
+      let future = new Date(timerIntervalID[0]["finish_full"]);
 
-          // Timer finished - scroll to card and mark as done
-          let cardElement = document.getElementById("card-" + el.id);
-          if (cardElement) {
-            // Add flash animation
-            cardElement.classList.add("flash-animation");
-            // Scroll to card with offset for sticky header
-            scrollToElementWithOffset(cardElement, SCROLL_OFFSET_PX);
-            // Add error state after animation completes (1.8s = 0.6s * 3 pulses)
-            setTimeout(() => {
-              cardElement.className += " error card-off ";
-              // Remove flash animation class
-              cardElement.classList.remove("flash-animation");
-            }, 3000);
-          }
+      let diff = diff_minutes(now, future);
+      minutes = diff.m;
+      seconds = diff.s;
 
-          if (el.parentElement) {
-            el.parentElement.innerHTML = "Time's Up";
-          }
-
+      if (minutes <= 0 && seconds <= 0) {
+        // Check again if timer is already done (prevent duplicate triggers)
+        const currentTimer = timers.find((t) => t.tid == el.id);
+        if (currentTimer && currentTimer.done) {
           clearInterval(timerIntervalID[0]["timercontrol"]);
-          alertvoice(el.id);
-
-          // Delay setting done=true until after animation completes
-          // This prevents card from disappearing immediately in hide-completed mode
-          const timerId = Number(el.id);
-          setTimeout(() => {
-            // Use immutable update for reactivity
-            timers = timers.map((timer) =>
-              timer.tid === timerId ? { ...timer, done: true } : timer,
-            );
-            ls_timers.set(timers);
-          }, 3000); // Same duration as flash animation (5 pulses)
-          TimeInfo();
-          return;
-        } else {
-          minutes--;
-          seconds = 60;
+          return; // Already processed, exit
         }
+
+        // Timer finished - scroll to card and mark as done
+        let cardElement = document.getElementById("card-" + el.id);
+        if (cardElement) {
+          // Add flash animation
+          cardElement.classList.add("flash-animation");
+          // Scroll to card with offset for sticky header
+          scrollToElementWithOffset(cardElement, SCROLL_OFFSET_PX);
+          // Add error state after animation completes (1.8s = 0.6s * 3 pulses)
+          setTimeout(() => {
+            cardElement.className += " error card-off ";
+            // Remove flash animation class
+            cardElement.classList.remove("flash-animation");
+          }, 3000);
+        }
+
+        if (el.parentElement) {
+          el.parentElement.innerHTML = "Time's Up";
+        }
+
+        clearInterval(timerIntervalID[0]["timercontrol"]);
+        alertvoice(el.id);
+        playBeep(); // Backup beep tone
+
+        // Send system notification if allowed (Critical for screen lock)
+        if ("Notification" in window && Notification.permission === "granted") {
+          try {
+            // Mobile browsers often vibrate/sound on notification
+            new Notification(`Timer ${el.id} Finished!`, {
+              body: "Waktu sudah habis!",
+              icon: "/favicon.png",
+              requireInteraction: true,
+              tag: `timer-${el.id}`,
+              vibrate: [200, 100, 200],
+            });
+          } catch (e) {
+            console.error("Notification failed", e);
+          }
+        }
+
+        // Delay setting done=true until after animation completes
+        // This prevents card from disappearing immediately in hide-completed mode
+        const timerId = Number(el.id);
+        setTimeout(() => {
+          // Use immutable update for reactivity
+          timers = timers.map((timer) =>
+            timer.tid === timerId ? { ...timer, done: true } : timer,
+          );
+          ls_timers.set(timers);
+        }, 3000); // Same duration as flash animation (5 pulses)
+        TimeInfo();
+        return;
       }
 
       if (minutes > 0) {
@@ -221,7 +260,6 @@
       for (let i = 0; i < timerun.length; i++) {
         timerun[i].innerHTML = timertext;
       }
-      seconds--;
     }, 1000);
   }
   function countdwn(node) {
@@ -268,6 +306,7 @@
     // Set timer counts
     timeractive = activeTimers.length;
     timerdone = completedTimers.length;
+
     // Update summary based on available timers
     if (activeTimers.length > 0) {
       updateSummaryInfo(activeTimers);
@@ -313,11 +352,19 @@
       }
       return `${timer.finish_at} (${timer.text})`;
     }
+    // Helper to get timestamp safely
+    const getTime = (t) => {
+      const d = t instanceof Date ? t : new Date(t);
+      return d.getTime();
+    };
+
     // Sort by start time (ascending) - immutable
-    const sortedByStart = [...timerList].sort(dynamicsort("start_full", "asc"));
+    const sortedByStart = [...timerList].sort(
+      (a, b) => getTime(a.start_full) - getTime(b.start_full),
+    );
     // Sort by finish time (ascending) - immutable
     const sortedByFinish = [...timerList].sort(
-      dynamicsort("finish_full", "asc"),
+      (a, b) => getTime(a.finish_full) - getTime(b.finish_full),
     );
     // First start: earliest start time
     const firstTimer = sortedByStart[0];
@@ -333,6 +380,13 @@
   let lastAddTime = 0;
   function addTimer() {
     const now = Date.now();
+    // Prime/Unlock SpeechSynthesis and AudioContext on user interaction
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.resume();
+    }
+    // Resume Web Audio Context
+    resumeAudio();
+
     if (now - lastAddTime < ADD_TIMER_COOLDOWN_MS) {
       alert("Tunggu sebentar sebelum menambah timer lagi");
       return;
@@ -586,6 +640,15 @@
   }
 
   onMount(() => {
+    // Request notification permission
+    // Request notification permission immediately
+    if (
+      typeof Notification !== "undefined" &&
+      Notification.permission !== "granted"
+    ) {
+      Notification.requestPermission();
+    }
+
     // Update summary info every second to keep seconds display reactive
     summaryInterval = setInterval(() => {
       if (timers && timers.length > 0) {
@@ -712,7 +775,7 @@
           style="width: 100%; margin: 0; padding: 7px 0px;"
         >
           <span style="position: relative; top: 3px;"
-            ><PlusCircleIcon size="20" aria-hidden="true" /></span
+            ><PlusCircleIcon size="20" /></span
           > <span>Add Timer</span>
         </button>
       </div>
@@ -781,7 +844,7 @@
                 style="margin: 0;"
                 aria-label="Delete timer {timer.tid}"
               >
-                <Trash2Icon size="16" aria-hidden="true" />
+                <Trash2Icon size="16" />
               </button>
             </div>
             {#if editingTimer === timer.tid}
@@ -864,7 +927,7 @@
                     style="margin: 0; position: absolute; bottom: 8px; right: 8px;"
                     aria-label="Edit timer {timer.tid}"
                   >
-                    <EditIcon size="16" aria-hidden="true" />
+                    <EditIcon size="16" />
                   </button>
                 {/if}
               </div>
@@ -935,7 +998,7 @@
         aria-label="Delete all timers"
       >
         <span style="position: relative; top: 3px;padding-right: 5px;"
-          ><Trash2Icon size="20" aria-hidden="true" /></span
+          ><Trash2Icon size="20" /></span
         ><span>Delete All</span>
       </button>
     </div>
