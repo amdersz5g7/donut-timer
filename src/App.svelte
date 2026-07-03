@@ -265,14 +265,29 @@
   }
   function startAllCountdowns() {
     if (!timers || timers.length === 0) return;
+    let changed = false;
+    const now = new Date();
     timers.forEach((timer) => {
-      if (!timer.done && !timer.remove) {
-        const el = document.getElementById(String(timer.tid));
-        if (el) {
-          countdown(el, timer.maxminute, 0);
-        }
+      if (timer.remove) return;
+      if (timer.done) return;
+
+      const finishTime = new Date(timer.finish_full);
+      // Timer already expired — mark as done immediately
+      if (finishTime <= now) {
+        timer.done = true;
+        changed = true;
+        return;
+      }
+
+      // Timer still running — start countdown
+      const el = document.getElementById(String(timer.tid));
+      if (el) {
+        countdown(el, timer.maxminute, 0);
       }
     });
+    if (changed) {
+      ls_timers.set(timers);
+    }
   }
   function dynamicsort(property, order) {
     var sort_order = 1;
@@ -768,10 +783,16 @@
               {/if}
             </div>
             <div class="section to-center">
-              <mark
-                class="tertiary timer-{timer.tid}"
-                id={timer.tid}
-              ></mark>
+              {#if timer.done}
+                <small style="color: #888;">
+                  Finished at {timer.finish_at}
+                </small>
+              {:else}
+                <mark
+                  class="tertiary timer-{timer.tid}"
+                  id={timer.tid}
+                ></mark>
+              {/if}
             </div>
           </div>
         </div>
