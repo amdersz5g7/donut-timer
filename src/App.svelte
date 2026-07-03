@@ -138,7 +138,7 @@
     // Check if timer is already done - don't restart countdown
     if (timerIntervalID[0]["done"]) {
       if (el.parentElement) {
-        el.parentElement.innerHTML = "Time's Up";
+        el.parentElement.textContent = "Time's Up";
       }
       return; // Exit early, don't set up interval
     }
@@ -190,7 +190,7 @@
         }
 
         if (el.parentElement) {
-          el.parentElement.innerHTML = "Time's Up";
+          el.parentElement.textContent = "Time's Up";
         }
 
         clearInterval(timerIntervalID[0]["timercontrol"]);
@@ -237,7 +237,7 @@
       let timerun = document.getElementsByClassName("timer-" + el.id);
       let timertext = minute_text + " " + seconds + " " + second_text + "";
       for (let i = 0; i < timerun.length; i++) {
-        timerun[i].innerHTML = timertext;
+        timerun[i].textContent = timertext;
       }
     }, 1000);
   }
