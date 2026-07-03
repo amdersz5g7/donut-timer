@@ -70,6 +70,7 @@
   let editingTimer = null; // Track which timer is being edited
   let editMinutes = 0;
   let editItems = 0;
+  let editNote = "";
 
   const ls_timers = writable("ls_timers", []);
   const unsubscribe_timers = ls_timers.subscribe((value) => {
@@ -475,6 +476,7 @@
       editingTimer = timerId;
       editMinutes = timer.maxminute;
       editItems = timer.items;
+      editNote = timer.note || "";
     }
   }
   function cancelEdit() {
@@ -539,6 +541,7 @@
       finish_at: xfinish,
       finish_full: xfinish_at,
       done: false,
+      note: editNote,
     };
 
     ls_timers.set(timers);
@@ -769,6 +772,24 @@
                       style="width: 100%; margin: 0;"
                     />
                   </div>
+                </div>
+                <div style="margin-bottom: 6px;">
+                  <label
+                    for="edit-note-{timer.tid}"
+                    style="display: block; margin-bottom: 4px;"
+                    ><small>Notes</small></label
+                  >
+                  <textarea
+                    id="edit-note-{timer.tid}"
+                    bind:value={editNote}
+                    rows="2"
+                    maxlength="200"
+                    style="width: 100%; margin: 0; resize: vertical; font-size: 0.9rem;"
+                    placeholder="Optional note..."
+                  ></textarea>
+                  <small style="color: #888; float: right; margin-top: 2px;">
+                    {editNote.length}/200
+                  </small>
                 </div>
                 <div style="display: flex; gap: 8px;">
                   <button
