@@ -768,7 +768,9 @@
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                   </svg>
-                  <span class="justinfo" style="color: #888; font-style: italic;">{timer.note}</span>
+                  <span class="justinfo" style="color: #888; font-style: italic;">
+                    {timer.note.length > 40 ? timer.note.slice(0, 40) + '...' : timer.note}
+                  </span>
                 </div>
               {/if}
               {#if !timer.done}
@@ -934,6 +936,7 @@
     position: relative;
     top: -4px;
     left: 3px;
+    word-break: break-word;
   }
   .xprimary {
     margin-top: 3px;
