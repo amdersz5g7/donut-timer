@@ -1,6 +1,5 @@
 <script>
   import {
-    PlusCircleIcon,
     Trash2Icon,
     ClockIcon,
     TargetIcon,
@@ -15,12 +14,12 @@
   import { debounce } from "./utils/debounce.js";
   import { scrollToElementWithOffset } from "./utils/timeUtils.js";
   import { SCROLL_OFFSET_PX } from "./utils/constants.js";
-  import { playBeep, resumeAudio } from "./utils/audio.js";
+  import { playBeep } from "./utils/audio.js";
+  import TimerForm from "./components/TimerForm.svelte";
 
   // Constants
   const STICKY_THRESHOLD = 0.4; // 40% of viewport
   const SCROLL_DEBOUNCE_MS = 100; // 100ms debounce
-  const ADD_TIMER_COOLDOWN_MS = 500; // 500ms cooldown
 
   // Export prop to handle external props passed to component
   export let name = "Donut Timer";
@@ -378,62 +377,32 @@
     const lastTimer = sortedByFinish[sortedByFinish.length - 1];
     lastfinish = formatFinishTime(lastTimer);
   }
-  // Add rate limiting
-  let lastAddTime = 0;
-  function addTimer() {
-    const now = Date.now();
-    // Prime/Unlock SpeechSynthesis and AudioContext on user interaction
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.resume();
-    }
-    // Resume Web Audio Context
-    resumeAudio();
-
-    // Request notification permission on user gesture
-    if (
-      typeof Notification !== "undefined" &&
-      Notification.permission === "default"
-    ) {
-      Notification.requestPermission();
-    }
-
-    if (now - lastAddTime < ADD_TIMER_COOLDOWN_MS) {
-      alert("Tunggu sebentar sebelum menambah timer lagi");
-      return;
-    }
-    lastAddTime = now;
-    // Fixed: Better validation
-    if (!maxminutes || maxminutes < 1 || !Number.isFinite(maxminutes)) {
-      alert("Menit harus lebih besar dari 0");
-      return;
-    }
+  function addTimer({ maxminutes, items }) {
     ls_maxminutes.set(maxminutes);
     let xstart_at = new Date();
     let xfinish_at = new Date(xstart_at.getTime() + maxminutes * 60000);
-    let xstart = xstart_at;
-    let xfinish = xfinish_at;
-    xstart =
-      (xstart.getHours() < 10 ? "0" + xstart.getHours() : xstart.getHours()) +
+    let xstart =
+      (xstart_at.getHours() < 10 ? "0" + xstart_at.getHours() : xstart_at.getHours()) +
       ":" +
-      (xstart.getMinutes() < 10
-        ? "0" + xstart.getMinutes()
-        : xstart.getMinutes()) +
+      (xstart_at.getMinutes() < 10
+        ? "0" + xstart_at.getMinutes()
+        : xstart_at.getMinutes()) +
       ":" +
-      (xstart.getSeconds() < 10
-        ? "0" + xstart.getSeconds()
-        : xstart.getSeconds());
-    xfinish =
-      (xfinish.getHours() < 10
-        ? "0" + xfinish.getHours()
-        : xfinish.getHours()) +
+      (xstart_at.getSeconds() < 10
+        ? "0" + xstart_at.getSeconds()
+        : xstart_at.getSeconds());
+    let xfinish =
+      (xfinish_at.getHours() < 10
+        ? "0" + xfinish_at.getHours()
+        : xfinish_at.getHours()) +
       ":" +
-      (xfinish.getMinutes() < 10
-        ? "0" + xfinish.getMinutes()
-        : xfinish.getMinutes()) +
+      (xfinish_at.getMinutes() < 10
+        ? "0" + xfinish_at.getMinutes()
+        : xfinish_at.getMinutes()) +
       ":" +
-      (xfinish.getSeconds() < 10
-        ? "0" + xfinish.getSeconds()
-        : xfinish.getSeconds());
+      (xfinish_at.getSeconds() < 10
+        ? "0" + xfinish_at.getSeconds()
+        : xfinish_at.getSeconds());
     timers = timers.concat({
       tid: count,
       remove: false,
@@ -441,7 +410,7 @@
       start_at: xstart,
       finish_at: xfinish,
       maxminute: maxminutes,
-      items: items, // Save items value when timer is created
+      items: items,
       start_full: xstart_at,
       finish_full: xfinish_at,
       done: false,
@@ -725,59 +694,11 @@
 
 <centerx>
   <div id="summary" class="containerx">
-    <div class="row">
-      <div class="col-sm-3" style="display: flex; flex-direction: column;">
-        <label for="input_menit" style="margin-bottom: 0.25rem;"
-          ><small>Minutes</small></label
-        >
-        <input
-          type="number"
-          id="input_menit"
-          placeholder="minutes"
-          bind:value={maxminutes}
-          style="margin: 0;"
-          min="1"
-          aria-label="Timer duration in minutes"
-          aria-required="true"
-        />
-      </div>
-      <div class="col-sm-3" style="display: flex; flex-direction: column;">
-        <label for="input_items" style="margin-bottom: 0.25rem;"
-          ><small>Items</small></label
-        >
-        <input
-          type="number"
-          id="input_items"
-          placeholder="items"
-          bind:value={items}
-          min="1"
-          style="margin: 0;"
-          aria-label="Number of items"
-          aria-required="true"
-          on:change={() => {
-            if (!Number.isInteger(items) || items < 1) {
-              items = 6;
-            }
-            ls_items.set(items);
-          }}
-        />
-      </div>
-      <div
-        class="col-sm-6"
-        style="display: flex; align-items: flex-end; padding: 0 calc(var(--universal-padding) / 2);"
-      >
-        <button
-          on:click={addTimer}
-          aria-label="Add new timer"
-          class="xprimary primary shadowed"
-          style="width: 100%; margin: 0; padding: 7px 0px;"
-        >
-          <span style="position: relative; top: 3px;"
-            ><PlusCircleIcon size="20" /></span
-          > <span>Add Timer</span>
-        </button>
-      </div>
-    </div>
+    <TimerForm
+      bind:maxminutes
+      bind:items
+      {addTimer}
+    />
 
     <div id="summaryx">
       {#if count > 1}
