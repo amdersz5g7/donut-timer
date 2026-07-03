@@ -106,7 +106,9 @@
 
       // Fallback voice selection if needed
       const voices = window.speechSynthesis.getVoices();
-      const idVoice = voices.find((v) => v.lang.includes("id"));
+      const idVoice = voices.length > 0
+        ? voices.find((v) => v.lang.includes("id"))
+        : null;
       if (idVoice) utterance.voice = idVoice;
 
       window.speechSynthesis.speak(utterance);
@@ -640,13 +642,9 @@
   }
 
   onMount(() => {
-    // Request notification permission
-    // Request notification permission immediately
-    if (
-      typeof Notification !== "undefined" &&
-      Notification.permission !== "granted"
-    ) {
-      Notification.requestPermission();
+    // Kick off async voice loading so getVoices() returns results later
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.getVoices();
     }
 
     // Update summary info every second to keep seconds display reactive
@@ -689,7 +687,7 @@
   <meta name="robots" content="index, nofollow" />
   <link
     rel="stylesheet"
-    href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css"
   />
   <script
     src="https://code.responsivevoice.org/responsivevoice.js?key=rrTffgeB"
