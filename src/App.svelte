@@ -16,6 +16,7 @@
   import { SCROLL_OFFSET_PX } from "./utils/constants.js";
   import { playBeep } from "./utils/audio.js";
   import TimerForm from "./components/TimerForm.svelte";
+  import TimerSummary from "./components/TimerSummary.svelte";
 
   // Constants
   const STICKY_THRESHOLD = 0.4; // 40% of viewport
@@ -701,44 +702,14 @@
     />
 
     <div id="summaryx">
-      {#if count > 1}
-        <div class="row">
-          <div class="col-sm-6">
-            <h6>
-              <small>Early Start</small>
-              {firststart}
-            </h6>
-          </div>
-          <div class="col-sm-6">
-            <h6>
-              <small>Timers</small>
-              {#if timeractive === "-" && timerdone === "-"}
-                -
-              {:else if timeractive === 0 && timerdone > 0}
-                {timerdone} done
-              {:else if timeractive > 0 && timerdone === 0}
-                {timeractive} active
-              {:else}
-                {timeractive} active, {timerdone} done
-              {/if}
-            </h6>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-6">
-            <h6>
-              <small>Early Finish</small>
-              {earlyfinish}
-            </h6>
-          </div>
-          <div class="col-sm-6">
-            <h6>
-              <small>Last Finish</small>
-              {lastfinish}
-            </h6>
-          </div>
-        </div>
-      {/if}
+      <TimerSummary
+        {firststart}
+        {lastfinish}
+        {earlyfinish}
+        {timeractive}
+        {timerdone}
+        {count}
+      />
     </div>
   </div>
 </centerx>
