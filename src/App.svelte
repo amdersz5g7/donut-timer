@@ -462,11 +462,6 @@
     }
     if (confirm("Hapus Timer " + timerId + "?")) {
       clearInterval(timerIntervalID[0]["timercontrol"]);
-      // timers.forEach(function (a, b) {
-      //   if (a.tid == timerId) {
-      //     timers[b].remove = true;
-      //   }
-      // });
       timers = timers.map((timer) =>
         timer.tid === timerId ? { ...timer, remove: true } : timer,
       );
