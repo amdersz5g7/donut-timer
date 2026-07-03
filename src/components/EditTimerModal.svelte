@@ -115,10 +115,10 @@
   >
     <div class="modal-card">
       <div class="modal-header">
-        <h5 style="margin: 0;">
+        <h5 style="margin: 0; white-space: nowrap;">
           Edit Timer {timerId}
           {#if remainingText}
-            <small style="color: #888; font-weight: normal;">{remainingText}</small>
+            <span style="color: #888; font-weight: normal; margin-left: 4px;">{remainingText}</span>
           {/if}
         </h5>
         <button
