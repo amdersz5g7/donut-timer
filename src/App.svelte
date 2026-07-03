@@ -1009,7 +1009,7 @@
         <a href="https://www.svelte.dev">
           <img src="/svelte.png" style="height: 48px" alt="svelte" />
         </a>
-        <a href="https://www.github.com">
+        <a href="https://github.com/amdersz5g7/donut-timer">
           <img
             style="height: 48px"
             src="https://cdn3.iconfinder.com/data/icons/social-media-2034/500/github-64.png"
@@ -1031,7 +1031,7 @@
 
 <style>
   .card.card-off > div * {
-    color: #eca4a4 !important;
+    color: #eca4a4;
     text-decoration: line-through;
   }
   html,
@@ -1071,58 +1071,57 @@
     margin-top: 3px;
   }
   /* Toggle show completed button - green color */
-  .toggle-show-btn {
-    background: #43a047 !important; /* Material Green 600 */
-    color: white !important;
-    border: 1px solid #388e3c !important;
+  .card.fluid .toggle-show-btn {
+    background: #43a047; /* Material Green 600 */
+    color: white;
+    border: 1px solid #388e3c;
   }
-  .toggle-show-btn:hover {
-    background: #388e3c !important; /* Material Green 700 */
-    border-color: #2e7d32 !important;
+  .card.fluid .toggle-show-btn:hover {
+    background: #388e3c; /* Material Green 700 */
+    border-color: #2e7d32;
   }
-  .toggle-show-btn:active {
-    background: #2e7d32 !important; /* Material Green 800 */
+  .card.fluid .toggle-show-btn:active {
+    background: #2e7d32; /* Material Green 800 */
   }
-  /* Center icons in icon-only buttons */
-  button.secondary {
+  /* Center icons in icon-only buttons — increase specificity to override mini.css */
+  button.xprimary.secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 8px !important;
-    border-radius: 3px !important;
+    padding: 8px;
+    border-radius: 3px;
   }
   .edit-section {
     background: rgba(0, 0, 0, 0.05);
-    padding: 15px !important;
+    padding: 15px;
     border-radius: 8px;
   }
-  .edit-timer-btn {
-    background: #f57c00 !important; /* Material Orange 700 - Good contrast */
-    color: white !important;
-    border: 1px solid #ef6c00 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+  .card.fluid .edit-timer-btn {
+    background: #f57c00; /* Material Orange 700 - Good contrast */
+    color: white;
+    border: 1px solid #ef6c00;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
-  .edit-timer-btn:hover {
-    background: #ef6c00 !important; /* Material Orange 800 */
-    border-color: #e65100 !important;
+  .card.fluid .edit-timer-btn:hover {
+    background: #ef6c00; /* Material Orange 800 */
+    border-color: #e65100;
   }
-  .edit-timer-btn:active {
-    background: #e65100 !important; /* Material Orange 900 */
+  .card.fluid .edit-timer-btn:active {
+    background: #e65100; /* Material Orange 900 */
   }
-  /* Dark mode support - ensure good contrast */
   @media (prefers-color-scheme: dark) {
-    .edit-timer-btn {
-      background: #fb8c00 !important; /* Lighter orange for dark mode */
-      border-color: #f57c00 !important;
+    .card.fluid .edit-timer-btn {
+      background: #fb8c00; /* Lighter orange for dark mode */
+      border-color: #f57c00;
     }
-    .edit-timer-btn:hover {
-      background: #f57c00 !important;
-      border-color: #ef6c00 !important;
+    .card.fluid .edit-timer-btn:hover {
+      background: #f57c00;
+      border-color: #ef6c00;
     }
-    .edit-timer-btn:active {
-      background: #ef6c00 !important;
+    .card.fluid .edit-timer-btn:active {
+      background: #ef6c00;
     }
   }
   #input_menit,
