@@ -129,5 +129,5 @@ See the `LICENSE` file at the project root.
 
 Created and maintained by [amdersz5g7](https://github.com/amdersz5g7)
 
-**Last Updated**: 2025-11-29   
-**Version**: v2025.11
+**Last Updated**: 2026-07-04   
+**Version**: v26.07

@@ -855,7 +855,7 @@
           />
         </a>
       </div>
-      <div class="col-sm-12">v25.11</div>
+      <div class="col-sm-12">v26.07</div>
     </div>
   </center>
 </footer>
