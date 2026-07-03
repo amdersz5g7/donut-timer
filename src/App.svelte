@@ -523,19 +523,16 @@
     const timerIndex = timers.findIndex((t) => t.tid === timerId);
     if (timerIndex === -1) return;
     const timer = timers[timerIndex];
-    // Keep original start time, only recalculate finish time
-    // Convert to Date object if it's a string (from localStorage)
-    let xstart_at =
-      timer.start_full instanceof Date
-        ? timer.start_full
-        : new Date(timer.start_full);
-    let xfinish_at = new Date(xstart_at.getTime() + editMinutes * 60000);
-    // Validate: finish time must be in the future
+
+    // Calculate new finish from NOW (not original start)
     let now = new Date();
+    let xfinish_at = new Date(now.getTime() + editMinutes * 60000);
+
+    // Validate: should always pass since we calculate from now
     if (xfinish_at <= now) {
       alert(
         "Waktu finish sudah lewat! Tambahkan lebih banyak menit.\n\nStart: " +
-          xstart_at.toLocaleTimeString() +
+          now.toLocaleTimeString() +
           "\nFinish akan jadi: " +
           xfinish_at.toLocaleTimeString() +
           "\nSekarang: " +
