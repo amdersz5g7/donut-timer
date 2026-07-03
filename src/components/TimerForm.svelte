@@ -74,6 +74,24 @@
       aria-required="true"
     />
   </div>
+  <div
+    class="col-sm-6"
+    style="display: flex; align-items: flex-end; padding: 0 calc(var(--universal-padding) / 2);"
+  >
+    <button
+      on:click={handleAdd}
+      aria-label="Add new timer"
+      class="xprimary primary shadowed"
+      style="width: 100%; margin: 0; padding: 7px 0px;"
+    >
+      <span style="position: relative; top: 3px;">
+        <PlusCircleIcon size="20" />
+      </span>
+      <span>Add Timer</span>
+    </button>
+  </div>
+</div>
+<div class="row">
   <div class="col-sm-12" style="margin-top: 8px; margin-bottom: 4px;">
     <label for="input_note" style="margin-bottom: 0.25rem;">
       <small>Notes (optional)</small>
@@ -90,21 +108,5 @@
     <small style="color: #888; float: right; margin-top: 2px;">
       {note.length}/200
     </small>
-  </div>
-  <div
-    class="col-sm-6"
-    style="display: flex; align-items: flex-end; padding: 0 calc(var(--universal-padding) / 2);"
-  >
-    <button
-      on:click={handleAdd}
-      aria-label="Add new timer"
-      class="xprimary primary shadowed"
-      style="width: 100%; margin: 0; padding: 7px 0px;"
-    >
-      <span style="position: relative; top: 3px;">
-        <PlusCircleIcon size="20" />
-      </span>
-      <span>Add Timer</span>
-    </button>
   </div>
 </div>
