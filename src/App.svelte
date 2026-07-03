@@ -378,7 +378,7 @@
     const lastTimer = sortedByFinish[sortedByFinish.length - 1];
     lastfinish = formatFinishTime(lastTimer);
   }
-  function addTimer({ maxminutes, items }) {
+  function addTimer({ maxminutes, items, note }) {
     ls_maxminutes.set(maxminutes);
     let xstart_at = new Date();
     let xfinish_at = new Date(xstart_at.getTime() + maxminutes * 60000);
@@ -415,6 +415,7 @@
       start_full: xstart_at,
       finish_full: xfinish_at,
       done: false,
+      note: note || "",
     });
     ls_timers.set(timers);
     count += 1;
