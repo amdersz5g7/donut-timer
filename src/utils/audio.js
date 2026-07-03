@@ -5,7 +5,12 @@ function getAudioContext() {
     if (!audioCtx) {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (AudioContext) {
-            audioCtx = new AudioContext();
+            try {
+                audioCtx = new AudioContext();
+            } catch (e) {
+                console.warn('AudioContext not available:', e);
+                return null;
+            }
         }
     }
     return audioCtx;
