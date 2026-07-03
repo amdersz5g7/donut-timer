@@ -6,8 +6,6 @@
     StopCircleIcon,
     PackageIcon,
     EditIcon,
-    SaveIcon,
-    XIcon,
   } from "svelte-feather-icons";
   import { writable } from "./lib/persistent.js";
   import { onDestroy, onMount } from "svelte";
@@ -17,6 +15,7 @@
   import { playBeep } from "./utils/audio.js";
   import TimerForm from "./components/TimerForm.svelte";
   import TimerSummary from "./components/TimerSummary.svelte";
+  import EditTimerModal from "./components/EditTimerModal.svelte";
 
   // Constants
   const STICKY_THRESHOLD = 0.4; // 40% of viewport
@@ -67,10 +66,9 @@
   let items = ls_items_val;
 
   let timers = [];
-  let editingTimer = null; // Track which timer is being edited
-  let editMinutes = 0;
-  let editItems = 0;
-  let editNote = "";
+  let editingTimer = null;
+  let modalTimer = null;
+  $: modalTimer = editingTimer !== null ? timers.find(t => t.tid === editingTimer) : null;
 
   const ls_timers = writable("ls_timers", []);
   const unsubscribe_timers = ls_timers.subscribe((value) => {
@@ -474,87 +472,52 @@
     const timer = timers.find((t) => t.tid === timerId);
     if (timer && !timer.done) {
       editingTimer = timerId;
-      editMinutes = timer.maxminute;
-      editItems = timer.items;
-      editNote = timer.note || "";
     }
   }
   function cancelEdit() {
     editingTimer = null;
-    editMinutes = 0;
-    editItems = 0;
   }
-  function saveEditTimer(timerId) {
-    if (!editMinutes || editMinutes < 1 || !Number.isFinite(editMinutes)) {
-      alert("Menit harus lebih besar dari 0");
-      return;
-    }
-    if (!editItems || editItems < 1 || !Number.isInteger(editItems)) {
-      alert("Items harus lebih besar dari 0");
-      return;
-    }
+
+  function handleModalSave(event) {
+    const { timerId, minutes, items, note } = event.detail;
     const timerIndex = timers.findIndex((t) => t.tid === timerId);
     if (timerIndex === -1) return;
     const timer = timers[timerIndex];
 
-    // Calculate new finish from NOW (not original start)
     let now = new Date();
-    let xfinish_at = new Date(now.getTime() + editMinutes * 60000);
+    let xfinish_at = new Date(now.getTime() + minutes * 60000);
 
-    // Validate: should always pass since we calculate from now
-    if (xfinish_at <= now) {
-      alert(
-        "Waktu finish sudah lewat! Tambahkan lebih banyak menit.\n\nStart: " +
-          now.toLocaleTimeString() +
-          "\nFinish akan jadi: " +
-          xfinish_at.toLocaleTimeString() +
-          "\nSekarang: " +
-          now.toLocaleTimeString(),
-      );
-      return;
-    }
-
-    // Clear existing interval
     if (timer.timercontrol) {
       clearInterval(timer.timercontrol);
     }
 
-    // Format finish time only
     let xfinish =
-      (xfinish_at.getHours() < 10
-        ? "0" + xfinish_at.getHours()
-        : xfinish_at.getHours()) +
+      (xfinish_at.getHours() < 10 ? "0" + xfinish_at.getHours() : xfinish_at.getHours()) +
       ":" +
-      (xfinish_at.getMinutes() < 10
-        ? "0" + xfinish_at.getMinutes()
-        : xfinish_at.getMinutes()) +
+      (xfinish_at.getMinutes() < 10 ? "0" + xfinish_at.getMinutes() : xfinish_at.getMinutes()) +
       ":" +
-      (xfinish_at.getSeconds() < 10
-        ? "0" + xfinish_at.getSeconds()
-        : xfinish_at.getSeconds());
+      (xfinish_at.getSeconds() < 10 ? "0" + xfinish_at.getSeconds() : xfinish_at.getSeconds());
 
-    // Update timer (keep original start_at and start_full)
     timers[timerIndex] = {
       ...timer,
-      maxminute: editMinutes,
-      items: editItems,
+      maxminute: minutes,
+      items: items,
+      note: note,
       finish_at: xfinish,
       finish_full: xfinish_at,
       done: false,
-      note: editNote,
     };
 
     ls_timers.set(timers);
     TimeInfo();
+    editingTimer = null;
 
-    // Restart countdown with remaining time
     setTimeout(() => {
       const element = document.getElementById(timerId.toString());
       if (element) {
-        countdown(element, editMinutes, 0);
+        countdown(element, minutes, 0);
       }
     }, 100);
-    cancelEdit();
   }
   function isDarkMode() {
     if (
@@ -741,131 +704,67 @@
                 <Trash2Icon size="16" />
               </button>
             </div>
-            {#if editingTimer === timer.tid}
-              <div class="section edit-section">
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                  <div style="flex: 1;">
-                    <label
-                      for="edit-minutes-{timer.tid}"
-                      style="display: block; margin-bottom: 4px;"
-                      ><small>Minutes</small></label
-                    >
-                    <input
-                      type="number"
-                      id="edit-minutes-{timer.tid}"
-                      bind:value={editMinutes}
-                      min="1"
-                      style="width: 100%; margin: 0;"
-                    />
-                  </div>
-                  <div style="flex: 1;">
-                    <label
-                      for="edit-items-{timer.tid}"
-                      style="display: block; margin-bottom: 4px;"
-                      ><small>Items</small></label
-                    >
-                    <input
-                      type="number"
-                      id="edit-items-{timer.tid}"
-                      bind:value={editItems}
-                      min="1"
-                      style="width: 100%; margin: 0;"
-                    />
-                  </div>
-                </div>
-                <div style="margin-bottom: 6px;">
-                  <label
-                    for="edit-note-{timer.tid}"
-                    style="display: block; margin-bottom: 4px;"
-                    ><small>Notes</small></label
-                  >
-                  <textarea
-                    id="edit-note-{timer.tid}"
-                    bind:value={editNote}
-                    rows="2"
-                    maxlength="200"
-                    style="width: 100%; margin: 0; resize: vertical; font-size: 0.9rem;"
-                    placeholder="Optional note..."
-                  ></textarea>
-                  <small style="color: #888; float: right; margin-top: 2px;">
-                    {editNote.length}/200
-                  </small>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                  <button
-                    on:click={() => saveEditTimer(timer.tid)}
-                    class="primary"
-                    style="flex: 1; margin: 0; padding: 6px 0;"
-                    aria-label="Save timer {timer.tid} changes"
-                  >
-                    <span style="position: relative; top: 3px;"
-                      ><SaveIcon size="16" aria-hidden="true" /></span
-                    > Save
-                  </button>
-                  <button
-                    on:click={cancelEdit}
-                    class="secondary"
-                    style="flex: 1; margin: 0; padding: 6px 0;"
-                    aria-label="Cancel editing timer {timer.tid}"
-                  >
-                    <span style="position: relative; top: 3px;"
-                      ><XIcon size="16" aria-hidden="true" /></span
-                    > Cancel
-                  </button>
-                </div>
+            <div class="section" style="position: relative;">
+              <div>
+                <TargetIcon size="20" />
+                <span class="justinfo">{timer.maxminute} menit</span>
               </div>
-            {:else}
-              <div class="section" style="position: relative;">
-                <div>
-                  <TargetIcon size="20" />
-                  <span class="justinfo">{timer.maxminute} menit</span>
-                </div>
-                <div>
-                  <PackageIcon size="20" />
-                  <span class="justinfo">{timer.items} items</span>
-                </div>
-                <div>
-                  <ClockIcon size="20" />
-                  <span class="justinfo">{timer.start_at}</span>
-                </div>
-                <div>
-                  <StopCircleIcon size="20" />
-                  <span class="justinfo">{timer.finish_at}</span>
-                </div>
-                {#if timer.note}
-                  <div>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; color: #888;">
-                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                    </svg>
-                    <span class="justinfo" style="color: #888; font-style: italic;">{timer.note}</span>
-                  </div>
-                {/if}
-                {#if !timer.done}
-                  <button
-                    class="xprimary secondary edit-timer-btn"
-                    on:click={() => startEditTimer(timer.tid)}
-                    style="margin: 0; position: absolute; bottom: 8px; right: 8px;"
-                    aria-label="Edit timer {timer.tid}"
-                  >
-                    <EditIcon size="16" />
-                  </button>
-                {/if}
+              <div>
+                <PackageIcon size="20" />
+                <span class="justinfo">{timer.items} items</span>
               </div>
-              <div class="section to-center">
-                <mark
-                  class="tertiary timer-{timer.tid}"
-                  id={timer.tid}
-                  use:countdwn
-                ></mark>
+              <div>
+                <ClockIcon size="20" />
+                <span class="justinfo">{timer.start_at}</span>
               </div>
-            {/if}
+              <div>
+                <StopCircleIcon size="20" />
+                <span class="justinfo">{timer.finish_at}</span>
+              </div>
+              {#if timer.note}
+                <div>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; color: #888;">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                  </svg>
+                  <span class="justinfo" style="color: #888; font-style: italic;">{timer.note}</span>
+                </div>
+              {/if}
+              {#if !timer.done}
+                <button
+                  class="xprimary secondary edit-timer-btn"
+                  on:click={() => startEditTimer(timer.tid)}
+                  style="margin: 0; position: absolute; bottom: 8px; right: 8px;"
+                  aria-label="Edit timer {timer.tid}"
+                >
+                  <EditIcon size="16" />
+                </button>
+              {/if}
+            </div>
+            <div class="section to-center">
+              <mark
+                class="tertiary timer-{timer.tid}"
+                id={timer.tid}
+                use:countdwn
+              ></mark>
+            </div>
           </div>
         </div>
       {/if}
     {/each}
   </div>
 </div>
+
+<EditTimerModal
+  open={editingTimer !== null}
+  timerId={editingTimer || 0}
+  currentMinutes={modalTimer ? modalTimer.maxminute : 1}
+  currentItems={modalTimer ? modalTimer.items : 1}
+  currentNote={modalTimer ? modalTimer.note || "" : ""}
+  on:save={handleModalSave}
+  on:cancel={cancelEdit}
+/>
+
 {#if count > 1}
   <div class="row">
     <div class="col-sm-6 col-md-6 col-lg-6">
