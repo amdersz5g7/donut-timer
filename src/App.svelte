@@ -389,6 +389,14 @@
     // Resume Web Audio Context
     resumeAudio();
 
+    // Request notification permission on user gesture
+    if (
+      typeof Notification !== "undefined" &&
+      Notification.permission === "default"
+    ) {
+      Notification.requestPermission();
+    }
+
     if (now - lastAddTime < ADD_TIMER_COOLDOWN_MS) {
       alert("Tunggu sebentar sebelum menambah timer lagi");
       return;
