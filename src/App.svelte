@@ -10,7 +10,7 @@
   import { writable } from "./lib/persistent.js";
   import { onDestroy, onMount, afterUpdate } from "svelte";
   import { debounce } from "./utils/debounce.js";
-  import { scrollToElementWithOffset } from "./utils/timeUtils.js";
+  import { scrollToElementWithOffset, diffMinutes, formatTime } from "./utils/timeUtils.js";
   import { SCROLL_OFFSET_PX } from "./utils/constants.js";
   import { playBeep } from "./utils/audio.js";
   import TimerForm from "./components/TimerForm.svelte";
@@ -122,29 +122,6 @@
     }
   }
 
-  function diff_minutes(date_now, date_future) {
-    if (date_now > date_future) {
-      return { m: 0, s: 0 };
-    }
-
-    var delta = Math.abs(date_future - date_now) / 1000;
-
-    var days = Math.floor(delta / 86400);
-    delta -= days * 86400;
-
-    var hours = Math.floor(delta / 3600) % 24;
-    delta -= hours * 3600;
-
-    var minutes = Math.floor(delta / 60) % 60;
-    delta -= minutes * 60;
-
-    var seconds = Math.floor(delta % 60);
-
-    var dif = Math.floor((date_future - date_now) / 60000);
-
-    return { m: dif, s: seconds };
-  }
-
   function countdown(element, minutes, seconds, _minuteadd) {
     var el = element;
 
@@ -169,7 +146,7 @@
     let date_now = new Date();
     let date_future = new Date(timerIntervalID[0]["finish_full"]);
 
-    let delta_time = diff_minutes(date_now, date_future);
+    let delta_time = diffMinutes(date_now, date_future);
 
     minutes = delta_time.m;
     seconds = delta_time.s;
@@ -185,7 +162,7 @@
       // Ensure finish_full is a Date object (might be string from JSON)
       let future = new Date(timerIntervalID[0]["finish_full"]);
 
-      let diff = diff_minutes(now, future);
+      let diff = diffMinutes(now, future);
       minutes = diff.m;
       seconds = diff.s;
 
@@ -204,7 +181,7 @@
           cardElement.classList.add("flash-animation");
           // Scroll to card with offset for sticky header
           scrollToElementWithOffset(cardElement, SCROLL_OFFSET_PX);
-          // Add error state after animation completes (1.8s = 0.6s * 3 pulses)
+          // Add error state after animation completes (3s = 0.6s * 5 pulses)
           setTimeout(() => {
             cardElement.className += " error card-off ";
             // Remove flash animation class
@@ -245,7 +222,8 @@
             timer.tid === timerId ? { ...timer, done: true } : timer,
           );
           ls_timers.set(timers);
-        }, 3000); // Same duration as flash animation (5 pulses)
+          TimeInfo();
+        }, 100); // Near-immediate reactive update
         TimeInfo();
         return;
       }
@@ -267,16 +245,13 @@
     if (!timers || timers.length === 0) return;
     let changed = false;
     const now = new Date();
-    timers.forEach((timer) => {
-      if (timer.remove) return;
-      if (timer.done) return;
+    timers = timers.map((timer) => {
+      if (timer.remove || timer.done) return timer;
 
       const finishTime = new Date(timer.finish_full);
-      // Timer already expired — mark as done immediately
       if (finishTime <= now) {
-        timer.done = true;
         changed = true;
-        return;
+        return { ...timer, done: true };
       }
 
       // Timer still running — start countdown
@@ -284,9 +259,18 @@
       if (el) {
         countdown(el, timer.maxminute, 0);
       }
+      return timer;
     });
     if (changed) {
       ls_timers.set(timers);
+      TimeInfo();
+    }
+  }
+  function countdownAction(node) {
+    const timerId = Number(node.id);
+    const timer = timers.find((t) => t.tid === timerId);
+    if (timer && !timer.done) {
+      countdown(node, timer.maxminute, 0);
     }
   }
   function dynamicsort(property, order) {
@@ -368,10 +352,10 @@
       const now = new Date();
       const finishTime = new Date(timer.finish_full);
       const diffMs = finishTime - now;
-      const diffMinutes = Math.floor(diffMs / 60000);
+      const minutesRemaining = Math.floor(diffMs / 60000);
       const diffSeconds = Math.floor((diffMs % 60000) / 1000);
       // If less than 1 minute remaining, show seconds
-      if (diffMinutes < 1 && diffSeconds > 0 && !timer.done) {
+      if (minutesRemaining < 1 && diffSeconds > 0 && !timer.done) {
         return `${timer.finish_at} (${timer.text}) - ${diffSeconds}s left`;
       }
       return `${timer.finish_at} (${timer.text})`;
@@ -404,28 +388,8 @@
     ls_maxminutes.set(maxminutes);
     let xstart_at = new Date();
     let xfinish_at = new Date(xstart_at.getTime() + maxminutes * 60000);
-    let xstart =
-      (xstart_at.getHours() < 10 ? "0" + xstart_at.getHours() : xstart_at.getHours()) +
-      ":" +
-      (xstart_at.getMinutes() < 10
-        ? "0" + xstart_at.getMinutes()
-        : xstart_at.getMinutes()) +
-      ":" +
-      (xstart_at.getSeconds() < 10
-        ? "0" + xstart_at.getSeconds()
-        : xstart_at.getSeconds());
-    let xfinish =
-      (xfinish_at.getHours() < 10
-        ? "0" + xfinish_at.getHours()
-        : xfinish_at.getHours()) +
-      ":" +
-      (xfinish_at.getMinutes() < 10
-        ? "0" + xfinish_at.getMinutes()
-        : xfinish_at.getMinutes()) +
-      ":" +
-      (xfinish_at.getSeconds() < 10
-        ? "0" + xfinish_at.getSeconds()
-        : xfinish_at.getSeconds());
+    let xstart = formatTime(xstart_at);
+    let xfinish = formatTime(xfinish_at);
     timers = timers.concat({
       tid: count,
       remove: false,
@@ -514,12 +478,7 @@
       clearInterval(timer.timercontrol);
     }
 
-    let xfinish =
-      (xfinish_at.getHours() < 10 ? "0" + xfinish_at.getHours() : xfinish_at.getHours()) +
-      ":" +
-      (xfinish_at.getMinutes() < 10 ? "0" + xfinish_at.getMinutes() : xfinish_at.getMinutes()) +
-      ":" +
-      (xfinish_at.getSeconds() < 10 ? "0" + xfinish_at.getSeconds() : xfinish_at.getSeconds());
+    let xfinish = formatTime(xfinish_at);
 
     timers[timerIndex] = {
       ...timer,
@@ -793,6 +752,7 @@
                 <mark
                   class="tertiary timer-{timer.tid}"
                   id={timer.tid}
+                  use:countdownAction
                 ></mark>
               {/if}
             </div>
