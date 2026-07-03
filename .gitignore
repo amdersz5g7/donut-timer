@@ -94,8 +94,8 @@ dist
 # Serverless directories
 .serverless/
 
-# FuseBox cache
-.fusebox/
+# Rollup/Svelte build output
+public/build/
 
 # DynamoDB Local files
 .dynamodb/

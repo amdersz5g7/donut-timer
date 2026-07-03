@@ -12,8 +12,8 @@ When a timer finishes, the timer card now displays a **flash/pulse animation** t
 - **Type:** Pulsing glow with scale effect
 - **Color:** Red (#f44336 - Material Red 500)
 - **Duration:** 0.6 seconds per pulse
-- **Repetitions:** 3 pulses
-- **Total Duration:** 1.8 seconds
+- **Repetitions:** 5 pulses
+- **Total Duration:** 3 seconds
 
 ### **Animation Sequence:**
 ```
@@ -23,7 +23,7 @@ When a timer finishes, the timer card now displays a **flash/pulse animation** t
    ↓
 3. Auto-scroll to card
    ↓
-4. Pulse 3 times (1.8 seconds)
+4. Pulse 5 times (3 seconds)
    ↓
 5. Apply error state (strikethrough text)
    ↓
@@ -55,7 +55,7 @@ When a timer finishes, the timer card now displays a **flash/pulse animation** t
 ### **Animation Class:**
 ```css
 .flash-animation {
-  animation: flashPulse 0.6s ease-in-out 3;
+  animation: flashPulse 0.6s ease-in-out 5;
 }
 ```
 
@@ -85,7 +85,7 @@ if (minutes == 0) {
     // 2. Scroll to card
     scrollToElementWithOffset(cardElement, SCROLL_OFFSET_PX);
     
-    // 3. Apply error state after animation (1.8s)
+    // 3. Apply error state after animation (3s)
     setTimeout(() => {
       cardElement.className += " error card-off ";
       cardElement.classList.remove("flash-animation");
@@ -250,7 +250,7 @@ The timer finish triggers **multiple feedback mechanisms**:
 1. **Single Timer Finish**
    - ✅ Flash animation plays
    - ✅ Auto-scroll works
-   - ✅ Error state applied after 1.8s
+   - ✅ Error state applied after 3s
    - ✅ Voice alert plays
 
 2. **Multiple Timers Finish Simultaneously**
@@ -336,7 +336,7 @@ Potential improvements:
 
 **Feature:** Flash animation on timer finish  
 **Type:** Pulsing red glow  
-**Duration:** 1.8 seconds (3 pulses)  
+**Duration:** 3 seconds (5 pulses)  
 **Purpose:** Draw attention to completed timer  
 
 **Implementation:**
