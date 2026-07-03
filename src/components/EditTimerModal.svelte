@@ -132,8 +132,8 @@
       </div>
 
       <div class="modal-body">
-        <div class="row" style="margin-bottom: 10px;">
-          <div class="col-sm-6">
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <div style="flex: 1;">
             <label for="modal-minutes" style="display: block; margin-bottom: 4px;">
               <small>Minutes</small>
             </label>
@@ -146,7 +146,7 @@
               aria-label="Edit timer duration in minutes"
             />
           </div>
-          <div class="col-sm-6">
+          <div style="flex: 1;">
             <label for="modal-items" style="display: block; margin-bottom: 4px;">
               <small>Items</small>
             </label>
@@ -237,7 +237,7 @@
 
   .modal-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     padding: 16px 20px 0 20px;
   }

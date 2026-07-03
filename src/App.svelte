@@ -745,7 +745,7 @@
                 <Trash2Icon size="16" />
               </button>
             </div>
-            <div class="section" style="position: relative;">
+            <div class="section" style="position: relative; padding-right: 48px; min-height: 40px;">
               <div>
                 <TargetIcon size="20" />
                 <span class="justinfo">{timer.maxminute} menit</span>
