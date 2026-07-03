@@ -730,7 +730,7 @@
           class="col-md-2 col-sm-6 col-xs-12"
           style="margin-bottom: 20px;"
         >
-          <div class="card fluid" class:card-off={timer.done}>
+          <div class="card fluid">
             <div
               class="section"
               style="position: relative; display: flex; align-items: center; justify-content: space-between;"
