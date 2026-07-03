@@ -728,6 +728,7 @@
         <div
           id={"card-" + timer.tid}
           class="col-md-2 col-sm-6 col-xs-12"
+          class:card-off={timer.done}
           style="margin-bottom: 20px;"
         >
           <div class="card fluid">
