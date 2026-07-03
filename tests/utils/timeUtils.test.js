@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { formatTime, diffMinutes, sanitizeHTML } from '../../src/utils/timeUtils.js';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { formatTime, diffMinutes, sanitizeHTML, scrollToElementWithOffset } from '../../src/utils/timeUtils.js';
 
 describe('formatTime', () => {
     it('formats date to HH:MM:SS', () => {
@@ -53,5 +53,51 @@ describe('sanitizeHTML', () => {
     it('handles ampersands', () => {
         const result = sanitizeHTML('A & B');
         expect(result).toBe('A &amp; B');
+    });
+});
+
+describe('scrollToElementWithOffset', () => {
+    let scrollToMock;
+    let getElementByIdMock;
+
+    beforeEach(() => {
+        scrollToMock = vi.fn();
+        window.scrollTo = scrollToMock;
+        window.pageYOffset = 100;
+        getElementByIdMock = vi.fn();
+        document.getElementById = getElementByIdMock;
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it('returns early if no element provided', () => {
+        scrollToElementWithOffset(null);
+        expect(scrollToMock).not.toHaveBeenCalled();
+    });
+
+    it('scrolls with default offset when no header', () => {
+        getElementByIdMock.mockReturnValue(null);
+        const el = {
+            getBoundingClientRect: () => ({ top: 200 }),
+        };
+        scrollToElementWithOffset(el);
+        expect(scrollToMock).toHaveBeenCalledWith({
+            top: 280, // 200 + 100 - 0 - 20
+            behavior: 'smooth',
+        });
+    });
+
+    it('accounts for header height in offset calculation', () => {
+        getElementByIdMock.mockReturnValue({ offsetHeight: 50 });
+        const el = {
+            getBoundingClientRect: () => ({ top: 300 }),
+        };
+        scrollToElementWithOffset(el, 30, 'auto');
+        expect(scrollToMock).toHaveBeenCalledWith({
+            top: 320, // 300 + 100 - 50 - 30
+            behavior: 'auto',
+        });
     });
 });
