@@ -5,6 +5,7 @@
   export let maxminutes = 75;
   export let items = 6;
   export let addTimer = () => {};
+  let note = "";
 
   let lastAddTime = 0;
   const ADD_TIMER_COOLDOWN_MS = 500;
@@ -37,7 +38,8 @@
       return;
     }
 
-    addTimer({ maxminutes, items });
+    addTimer({ maxminutes, items, note });
+    note = "";
   }
 </script>
 
@@ -71,6 +73,23 @@
       aria-label="Number of items"
       aria-required="true"
     />
+  </div>
+  <div class="col-sm-12" style="margin-top: 8px; margin-bottom: 4px;">
+    <label for="input_note" style="margin-bottom: 0.25rem;">
+      <small>Notes (optional)</small>
+    </label>
+    <textarea
+      id="input_note"
+      bind:value={note}
+      rows="2"
+      maxlength="200"
+      style="width: 100%; margin: 0; resize: vertical; font-size: 0.9rem;"
+      aria-label="Timer notes"
+      placeholder="Optional note..."
+    ></textarea>
+    <small style="color: #888; float: right; margin-top: 2px;">
+      {note.length}/200
+    </small>
   </div>
   <div
     class="col-sm-6"
