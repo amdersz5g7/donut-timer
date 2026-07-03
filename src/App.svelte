@@ -809,6 +809,7 @@
   currentMinutes={modalTimer ? modalTimer.maxminute : 1}
   currentItems={modalTimer ? modalTimer.items : 1}
   currentNote={modalTimer ? modalTimer.note || "" : ""}
+  finishFull={modalTimer ? modalTimer.finish_full : null}
   on:save={handleModalSave}
   on:cancel={cancelEdit}
 />

@@ -1,6 +1,6 @@
 <script>
   import { SaveIcon, XIcon } from "svelte-feather-icons";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onDestroy } from "svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -9,6 +9,7 @@
   export let currentMinutes = 1;
   export let currentItems = 1;
   export let currentNote = "";
+  export let finishFull = null;
 
   let editMinutes = currentMinutes;
   let editItems = currentItems;
@@ -20,6 +21,51 @@
     editItems = currentItems;
     editNote = currentNote || "";
   }
+
+  // Live countdown display in header
+  let remainingText = "";
+  let countdownInterval = null;
+
+  function updateRemaining() {
+    if (!finishFull) {
+      remainingText = "";
+      return;
+    }
+    const now = new Date();
+    const future = new Date(finishFull);
+    const diff = future - now;
+    if (diff <= 0) {
+      remainingText = "— Time's up";
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+      }
+      return;
+    }
+    const mins = Math.floor(diff / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    if (mins > 0) {
+      remainingText = `— ${mins} minute${mins > 1 ? "s" : ""} ${secs}s`;
+    } else {
+      remainingText = `— ${secs}s`;
+    }
+  }
+
+  $: if (open) {
+    updateRemaining();
+    if (!countdownInterval) {
+      countdownInterval = setInterval(updateRemaining, 1000);
+    }
+  } else {
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+    }
+  }
+
+  onDestroy(() => {
+    if (countdownInterval) clearInterval(countdownInterval);
+  });
 
   function handleSave() {
     if (!editMinutes || editMinutes < 1 || !Number.isFinite(editMinutes)) {
@@ -69,7 +115,12 @@
   >
     <div class="modal-card">
       <div class="modal-header">
-        <h5 style="margin: 0;">Edit Timer {timerId}</h5>
+        <h5 style="margin: 0;">
+          Edit Timer {timerId}
+          {#if remainingText}
+            <small style="color: #888; font-weight: normal;">{remainingText}</small>
+          {/if}
+        </h5>
         <button
           class="secondary"
           on:click={handleCancel}
