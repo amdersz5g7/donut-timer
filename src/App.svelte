@@ -8,7 +8,7 @@
     EditIcon,
   } from "svelte-feather-icons";
   import { writable } from "./lib/persistent.js";
-  import { onDestroy, onMount } from "svelte";
+  import { onDestroy, onMount, afterUpdate } from "svelte";
   import { debounce } from "./utils/debounce.js";
   import { scrollToElementWithOffset } from "./utils/timeUtils.js";
   import { SCROLL_OFFSET_PX } from "./utils/constants.js";
@@ -263,8 +263,16 @@
       }
     }, 1000);
   }
-  function countdwn(node) {
-    countdown(node, maxminutes, 0);
+  function startAllCountdowns() {
+    if (!timers || timers.length === 0) return;
+    timers.forEach((timer) => {
+      if (!timer.done && !timer.remove) {
+        const el = document.getElementById(String(timer.tid));
+        if (el) {
+          countdown(el, timer.maxminute, 0);
+        }
+      }
+    });
   }
   function dynamicsort(property, order) {
     var sort_order = 1;
@@ -584,12 +592,30 @@
       window.speechSynthesis.getVoices();
     }
 
+    // Start all active timer countdowns after DOM is fully rendered
+    setTimeout(() => {
+      startAllCountdowns();
+    }, 0);
+
     // Update summary info every second to keep seconds display reactive
     summaryInterval = setInterval(() => {
       if (timers && timers.length > 0) {
         TimeInfo();
       }
     }, 1000);
+  });
+
+  afterUpdate(() => {
+    if (timers && timers.length > 0) {
+      timers.forEach((timer) => {
+        if (!timer.done && !timer.remove && !timer.timercontrol) {
+          const el = document.getElementById(String(timer.tid));
+          if (el) {
+            countdown(el, timer.maxminute, 0);
+          }
+        }
+      });
+    }
   });
 
   onDestroy(() => {
@@ -745,7 +771,6 @@
               <mark
                 class="tertiary timer-{timer.tid}"
                 id={timer.tid}
-                use:countdwn
               ></mark>
             </div>
           </div>
