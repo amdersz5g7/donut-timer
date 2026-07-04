@@ -1,4 +1,4 @@
-# 🍩 Donut Timer
+# 🍩 Donut Timer [![Netlify Status](https://api.netlify.com/api/v1/badges/aeda9c88-9e26-4d12-a4a5-28c0c8de3c11/deploy-status)](https://app.netlify.com/projects/donut-timer/deploys)
 
 A multi-timer countdown web application for managing multiple parallel timers with persistent state storage. Perfect for kitchen timers, workout intervals, task scheduling, and more!
 
