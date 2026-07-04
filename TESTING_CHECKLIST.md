@@ -323,5 +323,5 @@ Before marking improvements as complete:
 
 ---
 
-**Last Updated:** 2025-12-05  
-**Version:** v25.12
+**Last Updated:** 2026-07-04  
+**Version:** v26.07

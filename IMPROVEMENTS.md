@@ -252,6 +252,6 @@ export const STICKY_THRESHOLD = 0.4;        // Sticky header threshold
 
 ---
 
-**Last Updated:** 2025-12-05  
-**Version:** v25.12 (Improved)  
+**Last Updated:** 2026-07-04  
+**Version:** v26.07
 **Improvements By:** AI Code Review & Refactoring
